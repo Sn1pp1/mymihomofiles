@@ -4,10 +4,20 @@ set -e
 OUTPUT_DIR="output"
 TEMP_DIR=$(mktemp -d)
 
-# Функция для очистки доменов от префиксов
+# ============================================
+# ФУНКЦИИ ДЛЯ ОЧИСТКИ ВСЕХ ВОЗМОЖНЫХ ПРЕФИКСОВ
+# ============================================
+
+# Очистка доменов от ВСЕХ префиксов
 parse_domain_fast() {
-    sed -E 's/^(domain|domain-suffix|domain-keyword|full|keyword|regexp|host)://' | \
+    sed -E 's/^(DOMAIN|DOMAIN-SUFFIX|DOMAIN-KEYWORD|FULL|HOST|KEYWORD|REGEXP|REGEX|HOST-SUFFIX|HOST-KEYWORD|HOST-REGEX|GEOSITE|GEOIP|AND|OR|NOT|URL-REGEX|URL-REGEXP|USER-AGENT|SCRIPT)://gi' | \
     sed -E 's/^(\+\.|\*\.)/ /' | \
+    sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+}
+
+# Очистка IP от ВСЕХ префиксов
+parse_ipcidr_fast() {
+    sed -E 's/^(IPCIDR|IP-CIDR|SRC-IPCIDR|SRC-IP-CIDR|DST-IPCIDR|DST-IP-CIDR|IP|IP6|IP6-CIDR|GEOIP)://gi' | \
     sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
 }
 
@@ -96,9 +106,19 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
                 grep -v '^[[:space:]]*$' | \
                 parse_domain_fast | \
                 grep -v '^$' | \
-                grep -v '^regexp:' | \
-                grep -v '^keyword:' | \
-                grep -v '^domain-keyword' | \
+                grep -vi '^regexp' | \
+                grep -vi '^regex' | \
+                grep -vi '^keyword' | \
+                grep -vi '^domain-keyword' | \
+                grep -vi '^host-keyword' | \
+                grep -vi '^url-regex' | \
+                grep -vi '^user-agent' | \
+                grep -vi '^script' | \
+                grep -vi '^and\|or\|not' | \
+                grep -vi '^process-' | \
+                grep -vi '^port' | \
+                grep -vi '^network' | \
+                grep -vi '^in-' | \
                 while IFS= read -r domain; do
                     # Проверяем что домен не пустой и не содержит пробелов
                     if [[ -n "$domain" && ! "$domain" =~ [[:space:]] ]]; then
@@ -145,6 +165,70 @@ if [[ ${#GEOSITE_MRS[@]} -gt 0 ]]; then
         else
             echo "  ❌ Не удалось скачать"
         fi
+    done
+fi
+
+# ============================================
+# GeoIP TXT — БЫСТРАЯ КОНВЕРТАЦИЯ (если есть)
+# ============================================
+if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "🌍 GeoIP TXT → MRS"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+    for NAME in "${!GEOIP_TXT[@]}"; do
+        SOURCE_URL="${GEOIP_TXT[$NAME]}"
+        echo ""
+        echo "🔄 $NAME"
+        
+        echo "  📥 Скачиваем..."
+        curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
+        
+        if [[ ! -s "$TEMP_DIR/${NAME}.txt" ]]; then
+            echo "  ⚠️ Пустой файл, пропускаем"
+            continue
+        fi
+        
+        LINE_COUNT=$(wc -l < "$TEMP_DIR/${NAME}.txt")
+        echo "  📊 Строк: $LINE_COUNT"
+        echo "  🔄 Обрабатываем..."
+        
+        {
+            echo "payload:"
+            
+            cat "$TEMP_DIR/${NAME}.txt" | \
+                grep -v '^[[:space:]]*#' | \
+                grep -v '^[[:space:]]*$' | \
+                parse_ipcidr_fast | \
+                grep -v '^$' | \
+                grep -vi '^geoip' | \
+                grep -vi '^process-' | \
+                grep -vi '^port' | \
+                grep -vi '^network' | \
+                while IFS= read -r ip; do
+                    if [[ -n "$ip" && ! "$ip" =~ [[:space:]] ]]; then
+                        echo "  - '$ip'"
+                    fi
+                done
+        } > "$TEMP_DIR/${NAME}.yaml"
+        
+        IP_COUNT=$(grep -c "^  - " "$TEMP_DIR/${NAME}.yaml" 2>/dev/null || echo "0")
+        
+        if [[ "$IP_COUNT" -eq 0 ]]; then
+            echo "  ⚠️ Нет IP для конвертации, пропускаем"
+            continue
+        fi
+        
+        echo "  🔧 Конвертируем в MRS (IP: $IP_COUNT)..."
+        
+        if ! "$TEMP_DIR/mihomo" convert-ruleset ipcidr yaml "$TEMP_DIR/${NAME}.yaml" "$OUTPUT_DIR/${NAME}.mrs" 2>&1; then
+            echo "  ❌ Ошибка конвертации!"
+            head -5 "$TEMP_DIR/${NAME}.yaml"
+            continue
+        fi
+        
+        echo "  ✅ $OUTPUT_DIR/${NAME}.mrs ($(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1))"
     done
 fi
 
