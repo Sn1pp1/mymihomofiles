@@ -187,12 +187,35 @@ if [[ ${#GEOIP_MRS[@]} -gt 0 ]]; then
     done
 fi
 
-rm -rf "$TEMP_DIR"
+ rm -rf "$TEMP_DIR"
+
+# ============================================
+# ФИНАЛЬНЫЙ ВЫВОД (в стиле GitHub Actions)
+# ============================================
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✅ Все файлы готовы!"
+echo "✅ Конвертация завершена успешно!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Показываем информацию о запуске
+if [[ -n "$GITHUB_RUN_NUMBER" ]]; then
+    echo "📦 Build #${GITHUB_RUN_NUMBER}"
+else
+    echo "📦 Локальный запуск"
+fi
+
+echo "🕐 Время: $(date '+%Y-%m-%d %H:%M:%S %Z')"
 echo ""
-echo "📁 Сгенерированные файлы:"
-ls -lh "$OUTPUT_DIR"/*.mrs 2>/dev/null || echo "  (нет файлов)"
+echo "📁 Сгенерировано файлов: $(ls -1 "$OUTPUT_DIR"/*.mrs 2>/dev/null | wc -l)"
+echo ""
+echo "📋 Файлы:"
+for file in "$OUTPUT_DIR"/*.mrs; do
+    if [[ -f "$file" ]]; then
+        size=$(du -h "$file" | cut -f1)
+        name=$(basename "$file")
+        printf "   • %-40s %s\n" "$name" "$size"
+    fi
+done
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
