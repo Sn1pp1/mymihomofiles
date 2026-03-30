@@ -87,6 +87,8 @@ declare -A GEOSITE_MRS=(
     ["meta"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/meta.mrs"
     ["discord"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/discord.mrs"
     ["youtube"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.mrs"
+    ["google-deepmind"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-deepmind.mrs"
+    ["google-play"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-play.mrs"
 )
 
 declare -A GEOIP_TXT=()
