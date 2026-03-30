@@ -4,16 +4,10 @@ set -e
 OUTPUT_DIR="output"
 TEMP_DIR=$(mktemp -d)
 
-# Функция для быстрой очистки доменов от префиксов
+# Функция для очистки доменов от префиксов
 parse_domain_fast() {
     sed -E 's/^(domain|domain-suffix|domain-keyword|full|keyword|regexp|host)://' | \
     sed -E 's/^(\+\.|\*\.)/ /' | \
-    sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
-}
-
-# Функция для быстрой очистки IP
-parse_ipcidr_fast() {
-    sed -E 's/^(ipcidr|ip|src-ipcidr)://' | \
     sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
 }
 
@@ -84,31 +78,52 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
         curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
         
         if [[ ! -s "$TEMP_DIR/${NAME}.txt" ]]; then
-            echo "  ⚠️ Пустой файл"
+            echo "  ⚠️ Пустой файл, пропускаем"
             continue
         fi
         
         LINE_COUNT=$(wc -l < "$TEMP_DIR/${NAME}.txt")
-        echo "  📊 Строк: $LINE_COUNT"
-        echo "  🔄 Конвертируем..."
+        echo "  📊 Строк в исходнике: $LINE_COUNT"
+        echo "  🔄 Обрабатываем..."
         
-        # БЫСТРАЯ обработка через sed вместо цикла while
-        echo "payload:" > "$TEMP_DIR/${NAME}.yaml"
+        # Создаем YAML с правильной структурой
+        {
+            echo "payload:"
+            
+            # Обрабатываем файл и добавляем только непустые домены
+            cat "$TEMP_DIR/${NAME}.txt" | \
+                grep -v '^[[:space:]]*#' | \
+                grep -v '^[[:space:]]*$' | \
+                parse_domain_fast | \
+                grep -v '^$' | \
+                grep -v '^regexp:' | \
+                grep -v '^keyword:' | \
+                grep -v '^domain-keyword' | \
+                while IFS= read -r domain; do
+                    # Проверяем что домен не пустой и не содержит пробелов
+                    if [[ -n "$domain" && ! "$domain" =~ [[:space:]] ]]; then
+                        echo "  - '+.$domain'"
+                    fi
+                done
+        } > "$TEMP_DIR/${NAME}.yaml"
         
-        # Удаляем префиксы, комментарии, пустые строки и добавляем +.
-        cat "$TEMP_DIR/${NAME}.txt" | \
-            grep -v '^[[:space:]]*#' | \
-            grep -v '^[[:space:]]*$' | \
-            parse_domain_fast | \
-            grep -v '^$' | \
-            grep -v '^regexp:' | \
-            grep -v '^keyword:' | \
-            sed "s/^/  - '+./" >> "$TEMP_DIR/${NAME}.yaml"
+        # Считаем количество правил
+        DOMAIN_COUNT=$(grep -c "^  - " "$TEMP_DIR/${NAME}.yaml" 2>/dev/null || echo "0")
         
-        DOMAIN_COUNT=$(grep -c "^  - " "$TEMP_DIR/${NAME}.yaml" || echo "0")
+        if [[ "$DOMAIN_COUNT" -eq 0 ]]; then
+            echo "  ⚠️ Нет доменов для конвертации, пропускаем"
+            continue
+        fi
+        
         echo "  🔧 Конвертируем в MRS (доменов: $DOMAIN_COUNT)..."
         
-        "$TEMP_DIR/mihomo" convert-ruleset domain yaml "$TEMP_DIR/${NAME}.yaml" "$OUTPUT_DIR/${NAME}.mrs"
+        # Конвертируем
+        if ! "$TEMP_DIR/mihomo" convert-ruleset domain yaml "$TEMP_DIR/${NAME}.yaml" "$OUTPUT_DIR/${NAME}.mrs" 2>&1; then
+            echo "  ❌ Ошибка конвертации!"
+            echo "  Первые 5 строк YAML:"
+            head -5 "$TEMP_DIR/${NAME}.yaml"
+            continue
+        fi
         
         echo "  ✅ $OUTPUT_DIR/${NAME}.mrs ($(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1))"
     done
@@ -125,8 +140,11 @@ if [[ ${#GEOSITE_MRS[@]} -gt 0 ]]; then
 
     for NAME in "${!GEOSITE_MRS[@]}"; do
         echo "📥 $NAME..."
-        curl -fL "${GEOSITE_MRS[$NAME]}" -o "$OUTPUT_DIR/${NAME}.mrs"
-        echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
+        if curl -fL "${GEOSITE_MRS[$NAME]}" -o "$OUTPUT_DIR/${NAME}.mrs" 2>/dev/null; then
+            echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
+        else
+            echo "  ❌ Не удалось скачать"
+        fi
     done
 fi
 
@@ -141,8 +159,11 @@ if [[ ${#GEOIP_MRS[@]} -gt 0 ]]; then
 
     for NAME in "${!GEOIP_MRS[@]}"; do
         echo "📥 $NAME..."
-        curl -fL "${GEOIP_MRS[$NAME]}" -o "$OUTPUT_DIR/${NAME}.mrs"
-        echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
+        if curl -fL "${GEOIP_MRS[$NAME]}" -o "$OUTPUT_DIR/${NAME}.mrs" 2>/dev/null; then
+            echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
+        else
+            echo "  ❌ Не удалось скачать"
+        fi
     done
 fi
 
@@ -157,7 +178,10 @@ echo "✅ Готово!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 [[ -n "$GITHUB_RUN_NUMBER" ]] && echo "📦 Build #${GITHUB_RUN_NUMBER}"
 echo "🕐 $(date '+%Y-%m-%d %H:%M:%S %Z')"
-echo "📁 Файлов: $(ls -1 "$OUTPUT_DIR"/*.mrs 2>/dev/null | wc -l)"
-echo ""
-ls -lh "$OUTPUT_DIR"/*.mrs 2>/dev/null | awk '{print "   • " $9 " (" $5 ")"}' || echo "  (нет файлов)"
+FILE_COUNT=$(ls -1 "$OUTPUT_DIR"/*.mrs 2>/dev/null | wc -l)
+echo "📁 Файлов: $FILE_COUNT"
+if [[ "$FILE_COUNT" -gt 0 ]]; then
+    echo ""
+    ls -lh "$OUTPUT_DIR"/*.mrs 2>/dev/null | awk '{print "   • " $9 " (" $5 ")"}'
+fi
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
