@@ -21,34 +21,39 @@ MIHOMO_VERSION=$(echo "$LATEST_JSON" | grep '"tag_name"' | cut -d'"' -f4)
 
 echo "📦 Версия: ${MIHOMO_VERSION}"
 
-# Извлекаем все URL для Linux amd64
-echo "🔍 Ищем подходящий файл для Linux amd64..."
-MIHOMO_URL=$(echo "$LATEST_JSON" | grep '"browser_download_url"' | \
-    grep 'mihomo-linux-amd64-compatible.*\.gz$' | \
-    cut -d'"' -f4 | head -1)
+# Сохраняем все URL во временный файл
+echo "$LATEST_JSON" | grep '"browser_download_url"' | cut -d'"' -f4 > "$TEMP_DIR/urls.txt"
+
+echo "🔍 Ищем mihomo-linux-amd64-compatible..."
+# Ищем файл с compatible
+MIHOMO_URL=$(grep 'mihomo-linux-amd64-compatible.*\.gz' "$TEMP_DIR/urls.txt" | head -1)
 
 if [[ -z "$MIHOMO_URL" ]]; then
-    echo "⚠️ Не найдено mihomo-linux-amd64-compatible, пробуем просто mihomo-linux-amd64..."
-    MIHOMO_URL=$(echo "$LATEST_JSON" | grep '"browser_download_url"' | \
-        grep 'mihomo-linux-amd64[^-].*\.gz$' | \
-        cut -d'"' -f4 | head -1)
+    echo "⚠️ Не найдено compatible, ищем mihomo-linux-amd64-v..."
+    MIHOMO_URL=$(grep 'mihomo-linux-amd64-v.*\.gz' "$TEMP_DIR/urls.txt" | head -1)
 fi
 
 if [[ -z "$MIHOMO_URL" ]]; then
-    echo "❌ Не удалось найти подходящий файл для Linux amd64"
-    echo "Доступные файлы:"
-    echo "$LATEST_JSON" | grep '"browser_download_url"' | grep 'linux-amd64' | cut -d'"' -f4
+    echo "⚠️ Ищем любой mihomo-linux-amd64 .gz"
+    MIHOMO_URL=$(grep 'mihomo-linux-amd64.*\.gz' "$TEMP_DIR/urls.txt" | grep -v '\.pkg\.tar' | head -1)
+fi
+
+if [[ -z "$MIHOMO_URL" ]]; then
+    echo "❌ Не удалось найти подходящий файл"
+    echo "Доступные Linux amd64 файлы:"
+    grep 'linux-amd64' "$TEMP_DIR/urls.txt"
     exit 1
 fi
 
-echo "📥 Скачиваем: $MIHOMO_URL"
+echo "✅ Найдено: $MIHOMO_URL"
+echo "📥 Скачиваем..."
 curl -fL "$MIHOMO_URL" -o "$TEMP_DIR/mihomo.gz"
 
 echo "📦 Распаковываем..."
 gunzip -f "$TEMP_DIR/mihomo.gz"
 chmod +x "$TEMP_DIR/mihomo"
 
-echo "🔧 Проверяем версию..."
+echo "🔧 Версия mihomo:"
 "$TEMP_DIR/mihomo" -v || true
 
 echo "🔧 Конвертируем YAML → MRS..."
