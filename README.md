@@ -15,6 +15,7 @@
   - [itdoginfo/allow-domains](https://github.com/itdoginfo/allow-domains) - доменные списки / IP-диапазоны
   - [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip) — IP-диапазоны
   - [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — доменные списки
+  - [MetaCubeX/meta-rules-dat](https://github.com/MetaCubeX/meta-rules-dat) - доменные списки / IP-диапазоны
   - Кастомные списки
 
 ## 📡 КОНФИГУРАЦИЯ ДЛЯ MIHOMO
