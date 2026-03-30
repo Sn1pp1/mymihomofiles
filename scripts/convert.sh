@@ -4,10 +4,17 @@ set -e
 OUTPUT_DIR="output"
 TEMP_DIR=$(mktemp -d)
 
-# Массив файлов для конвертации
-declare -A FILES_MAP=(
-    ["ru-blocked"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/ru-blocked.txt"
-    ["refilter"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/refilter.txt"
+# GeoSite файлы (требуют конвертации из txt)
+declare -A GEOSITE_FILES=(
+    ["ru-blocked-domains"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/ru-blocked.txt"
+    ["refilter-domains"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/refilter.txt"
+    ["domain-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
+)
+
+# GeoIP файлы (уже в mrs формате - просто скачиваем)
+declare -A GEOIP_FILES=(
+    ["ru-blocked-ip"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geoip/release/mrs/ru-blocked.mrs"
+    ["ru-blocked-community-ip"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geoip/release/mrs/ru-blocked-community.mrs"
 )
 
 echo "⚙️ Получаем информацию о последнем релизе mihomo..."
@@ -16,7 +23,7 @@ MIHOMO_VERSION=$(echo "$LATEST_JSON" | grep '"tag_name"' | cut -d'"' -f4)
 
 echo "📦 Версия mihomo: ${MIHOMO_VERSION}"
 
-# Скачиваем mihomo
+# Скачиваем mihomo только для конвертации GeoSite
 echo "$LATEST_JSON" | grep '"browser_download_url"' | cut -d'"' -f4 > "$TEMP_DIR/urls.txt"
 MIHOMO_URL=$(grep 'mihomo-linux-amd64-compatible.*\.gz' "$TEMP_DIR/urls.txt" | head -1)
 
@@ -40,34 +47,71 @@ chmod +x "$TEMP_DIR/mihomo"
 
 mkdir -p "$OUTPUT_DIR"
 
-# Конвертируем каждый файл
-for NAME in "${!FILES_MAP[@]}"; do
-    SOURCE_URL="${FILES_MAP[$NAME]}"
+# ============================================
+# GeoSite файлы - КОНВЕРТИРУЕМ из txt
+# ============================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🌐 GeoSite файлы (конвертация)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+for NAME in "${!GEOSITE_FILES[@]}"; do
+    SOURCE_URL="${GEOSITE_FILES[$NAME]}"
     echo ""
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "🔄 Обработка: $NAME"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     
-    echo "📥 Скачиваем $NAME.txt..."
+    echo "  📥 Скачиваем $NAME.txt..."
+    # Используем -L для редиректов (важно для raw.githubusercontent.com и github.com)
     curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
     
-    echo "🔄 Конвертируем в YAML..."
+    # Проверяем что файл не пустой
+    if [[ ! -s "$TEMP_DIR/${NAME}.txt" ]]; then
+        echo "  ⚠️ Файл пуст или не скачался, пропускаем..."
+        continue
+    fi
+    
+    echo "  🔄 Конвертируем в YAML..."
     echo "payload:" > "$TEMP_DIR/${NAME}.yaml"
     while IFS= read -r domain; do
-        [[ -z "$domain" || "$domain" =~ ^# ]] && continue
+        # Пропускаем пустые строки, комментарии и уже формализованные правила
+        [[ -z "$domain" || "$domain" =~ ^# || "$domain" =~ ^[+\*\.] ]] && continue
+        # Добавляем +. для матчинга домена и всех поддоменов
         echo "  - '+.$domain'" >> "$TEMP_DIR/${NAME}.yaml"
     done < "$TEMP_DIR/${NAME}.txt"
     
-    echo "🔧 Конвертируем YAML → MRS..."
+    echo "  🔧 Конвертируем YAML → MRS..."
     "$TEMP_DIR/mihomo" convert-ruleset domain yaml "$TEMP_DIR/${NAME}.yaml" "$OUTPUT_DIR/${NAME}.mrs"
     
-    echo "✅ Готово: $OUTPUT_DIR/${NAME}.mrs ($(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1))"
+    echo "  ✅ Готово: $OUTPUT_DIR/${NAME}.mrs ($(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1))"
+done
+
+# ============================================
+# GeoIP файлы - ПРОСТО СКАЧИВАЕМ
+# ============================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🌍 GeoIP файлы (скачивание)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+for NAME in "${!GEOIP_FILES[@]}"; do
+    SOURCE_URL="${GEOIP_FILES[$NAME]}"
+    echo ""
+    echo "📥 Скачиваем: $NAME"
+    
+    curl -fL "$SOURCE_URL" -o "$OUTPUT_DIR/${NAME}.mrs"
+    
+    echo "  ✅ Готово: $OUTPUT_DIR/${NAME}.mrs ($(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1))"
 done
 
 rm -rf "$TEMP_DIR"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✅ Все файлы сконвертированы!"
+echo "✅ Все файлы готовы!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-ls -lh "$OUTPUT_DIR"/*.mrs
+echo ""
+echo "📁 GeoSite (домены):"
+ls -lh "$OUTPUT_DIR"/*-domains.mrs 2>/dev/null || true
+echo ""
+echo "📁 GeoIP (IP):"
+ls -lh "$OUTPUT_DIR"/*-ip.mrs 2>/dev/null || true
