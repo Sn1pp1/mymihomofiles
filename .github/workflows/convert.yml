@@ -1,10 +1,9 @@
-name: Convert Russia Rules to MRS
+name: Convert to MRS
 
 on:
   schedule:
-    # Запуск каждые 6 часов: 00:00, 06:00, 12:00, 18:00 UTC
     - cron: '0 */6 * * *'
-  workflow_dispatch:  # Ручной запуск через UI
+  workflow_dispatch:
 
 permissions:
   contents: write
