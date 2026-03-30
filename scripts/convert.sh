@@ -8,38 +8,50 @@ TEMP_DIR=$(mktemp -d)
 echo "📥 Скачиваем исходный список доменов..."
 curl -sL "$SOURCE_URL" -o "$TEMP_DIR/ru-blocked.txt"
 
-echo "🔄 Конвертируем в YAML-формат для mihomo..."
+echo "🔄 Конвертируем в YAML..."
 echo "payload:" > "$TEMP_DIR/ru-blocked.yaml"
 while IFS= read -r domain; do
     [[ -z "$domain" || "$domain" =~ ^# ]] && continue
     echo "  - '+.$domain'" >> "$TEMP_DIR/ru-blocked.yaml"
 done < "$TEMP_DIR/ru-blocked.txt"
 
-echo "⚙️ Получаем последнюю версию mihomo..."
-# Получаем последнюю версию через GitHub API
-LATEST_RELEASE=$(curl -sL https://api.github.com/repos/MetaCubeX/mihomo/releases/latest | grep '"tag_name"' | cut -d'"' -f4)
-echo "📦 Версия: $LATEST_RELEASE"
+echo "⚙️ Получаем информацию о последнем релизе mihomo..."
+LATEST_JSON=$(curl -sL https://api.github.com/repos/MetaCubeX/mihomo/releases/latest)
+MIHOMO_VERSION=$(echo "$LATEST_JSON" | grep '"tag_name"' | cut -d'"' -f4)
 
-MIHOMO_URL="https://github.com/MetaCubeX/mihomo/releases/download/${LATEST_RELEASE}/mihomo-linux-amd64-compatible.gz"
+echo "📦 Найденная версия: ${MIHOMO_VERSION:-'не найдена'}"
 
-echo "⬇️ Скачиваем mihomo..."
-curl -fL "$MIHOMO_URL" -o "$TEMP_DIR/mihomo.gz" || {
-    echo "❌ Не удалось скачать mihomo"
-    echo "Проверяем что получили:"
-    file "$TEMP_DIR/mihomo.gz"
-    head -20 "$TEMP_DIR/mihomo.gz"
+# Пробуем разные варианты имен файлов
+MIHOMO_FILES=(
+    "mihomo-linux-amd64-compatible"
+    "mihomo-linux-amd64"
+    "mihomo"
+)
+
+for MIHOMO_BASE in "${MIHOMO_FILES[@]}"; do
+    MIHOMO_URL="https://github.com/MetaCubeX/mihomo/releases/download/${MIHOMO_VERSION}/${MIHOMO_BASE}.gz"
+    echo "🔄 Пробуем: ${MIHOMO_BASE}"
+    
+    if curl -fL "$MIHOMO_URL" -o "$TEMP_DIR/mihomo.gz" 2>/dev/null; then
+        echo "✅ Успешно скачан: ${MIHOMO_BASE}"
+        break
+    fi
+done
+
+if [[ ! -f "$TEMP_DIR/mihomo.gz" ]]; then
+    echo "❌ Не удалось скачать mihomo ни в одном из форматов"
+    echo "Доступные файлы в релизе ${MIHOMO_VERSION}:"
+    echo "$LATEST_JSON" | grep '"browser_download_url"' | cut -d'"' -f4
     exit 1
-}
+fi
 
-echo "📦 Распаковываем..."
 gunzip -f "$TEMP_DIR/mihomo.gz"
 chmod +x "$TEMP_DIR/mihomo"
 
-echo "🔧 Конвертируем YAML → MRS..."
+echo "🔧 Конвертируем в MRS..."
 mkdir -p "$OUTPUT_DIR"
 "$TEMP_DIR/mihomo" convert-ruleset domain yaml "$TEMP_DIR/ru-blocked.yaml" "$OUTPUT_DIR/ru-blocked.mrs"
 
 rm -rf "$TEMP_DIR"
 
-echo "✅ Готово! Файл: $OUTPUT_DIR/ru-blocked.mrs"
-echo "📊 Размер: $(du -h "$OUTPUT_DIR/ru-blocked.mrs" | cut -f1)"
+echo "✅ Готово: $OUTPUT_DIR/ru-blocked.mrs ($(du -h "$OUTPUT_DIR/ru-blocked.mrs" | cut -f1))"
