@@ -32,8 +32,8 @@ declare -A GEOIP_MRS=(
     ["ru-blocked-ip"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geoip/release/mrs/ru-blocked.mrs"
     ["ru-blocked-community-ip"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geoip/release/mrs/ru-blocked-community.mrs"
     ["refilter-ip"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geoip/release/mrs/re-filter.mrs"
-    ["discord_ipcidr"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/discord_ipcidr.mrs"
-    ["discord_ipcidr"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/meta_ipcidr.mrs"
+    ["discord-ip"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/discord_ipcidr.mrs"
+    ["meta-ip"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/meta_ipcidr.mrs"
 )
 
 # ============================================
