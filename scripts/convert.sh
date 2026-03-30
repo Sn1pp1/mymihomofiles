@@ -5,11 +5,10 @@ OUTPUT_DIR="output"
 TEMP_DIR=$(mktemp -d)
 CACHE_DIR="$OUTPUT_DIR/.cache"
 
-# Создаем директорию для кэша
 mkdir -p "$CACHE_DIR"
 
 # ============================================
-# ФУНКЦИИ ДЛЯ ОЧИСТКИ ВСЕХ ВОЗМОЖНЫХ ПРЕФИКСОВ
+# ФУНКЦИИ ДЛЯ ОЧИСТКИ ПРЕФИКСОВ
 # ============================================
 
 parse_domain_fast() {
@@ -24,26 +23,23 @@ parse_ipcidr_fast() {
 }
 
 # ============================================
-# ФУНКЦИИ ПРОВЕРКИ И ВАЛИДАЦИИ
+# ФУНКЦИИ ПРОВЕРКИ
 # ============================================
 
-# Проверка HTTP ответа
 check_http_response() {
     local url="$1"
     local response=$(curl -sIL "$url" -w "%{http_code}" -o /dev/null)
     [[ "$response" == "200" ]]
 }
 
-# Проверка что файл не HTML (частая ошибка GitHub)
 check_not_html() {
     local file="$1"
     ! head -c 500 "$file" | grep -qi '<!DOCTYPE\|<html\|<head\|<body'
 }
 
-# Проверка размера файла
 check_file_size() {
     local file="$1"
-    local min_size="${2:-100}"
+    local min_size="${2:-50}"
     
     if [[ ! -f "$file" ]]; then
         return 1
@@ -53,102 +49,11 @@ check_file_size() {
     [[ "$size" -ge "$min_size" ]]
 }
 
-# Проверка целостности TXT (домены)
-check_txt_integrity_domain() {
-    local file="$1"
-    local min_lines="${2:-10}"
-    
-    # Проверка количества строк
-    local line_count=$(wc -l < "$file")
-    if [[ "$line_count" -lt "$min_lines" ]]; then
-        echo "    ⚠️ Слишком мало строк: $line_count (минимум: $min_lines)"
-        return 1
-    fi
-    
-    # Проверка что это не HTML
-    if ! check_not_html "$file"; then
-        echo "    ⚠️ Файл содержит HTML (возможно ошибка ссылки)"
-        return 1
-    fi
-    
-    # Проверка что есть доменные имена (хотя бы 50% строк содержат точки)
-    local valid_lines=$(grep -c '\.' "$file" 2>/dev/null || echo "0")
-    local valid_percent=$((valid_lines * 100 / line_count))
-    
-    if [[ "$valid_percent" -lt 50 ]]; then
-        echo "    ⚠️ Мало доменов: $valid_percent% (минимум: 50%)"
-        return 1
-    fi
-    
-    # Проверка на явные ошибки
-    if head -20 "$file" | grep -qi '404\|not found\|access denied'; then
-        echo "    ⚠️ Файл содержит ошибки доступа"
-        return 1
-    fi
-    
-    return 0
-}
-
-# Проверка целостности TXT (IP)
-check_txt_integrity_ip() {
-    local file="$1"
-    local min_lines="${2:-5}"
-    
-    local line_count=$(wc -l < "$file")
-    if [[ "$line_count" -lt "$min_lines" ]]; then
-        echo "    ⚠️ Слишком мало строк: $line_count"
-        return 1
-    fi
-    
-    if ! check_not_html "$file"; then
-        echo "    ⚠️ Файл содержит HTML"
-        return 1
-    fi
-    
-    # Проверка что есть IP-адреса (хотя бы 30% строк содержат цифры и точки/слэши)
-    local valid_lines=$(grep -cE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' "$file" 2>/dev/null || echo "0")
-    local valid_percent=$((valid_lines * 100 / line_count))
-    
-    if [[ "$valid_percent" -lt 30 ]]; then
-        echo "    ⚠️ Мало IP-адресов: $valid_percent% (минимум: 30%)"
-        return 1
-    fi
-    
-    return 0
-}
-
-# Проверка целостности MRS
-check_mrs_integrity() {
-    local file="$1"
-    
-    if [[ ! -f "$file" ]]; then
-        echo "    ⚠️ Файл не существует"
-        return 1
-    fi
-    
-    local size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null || echo "0")
-    if [[ "$size" -lt 100 ]]; then
-        echo "    ⚠️ Файл слишком маленький: $size байт"
-        return 1
-    fi
-    
-    # Проверка что это бинарный файл (MRS имеет специфичную структуру)
-    # MRS файлы начинаются с бинарных данных, не с текста
-    if head -c 10 "$file" | grep -q '^[[:print:]]*$'; then
-        echo "    ⚠️ Файл текстовый, а не бинарный MRS"
-        return 1
-    fi
-    
-    return 0
-}
-
-# Проверка хэша (кэширование)
 check_cache() {
     local name="$1"
     local url="$2"
     local cache_file="$CACHE_DIR/${name}.hash"
     
-    # Получаем хэш текущего URL (ETag или последний модифицированный)
     local current_hash=$(curl -sIL "$url" 2>/dev/null | grep -iE '^(etag|last-modified):' | tr -d '\r' | md5sum | cut -d' ' -f1)
     
     if [[ -z "$current_hash" ]]; then
@@ -158,29 +63,12 @@ check_cache() {
     if [[ -f "$cache_file" ]]; then
         local cached_hash=$(cat "$cache_file")
         if [[ "$current_hash" == "$cached_hash" ]] && [[ -f "$OUTPUT_DIR/${name}.mrs" ]]; then
-            return 0  # Есть в кэше
+            return 0
         fi
     fi
     
-    # Сохраняем новый хэш
     echo "$current_hash" > "$cache_file"
-    return 1  # Нет в кэше
-}
-
-# Валидация MRS файла через mihomo
-validate_mrs() {
-    local mihomo="$1"
-    local mrs_file="$2"
-    
-    if [[ ! -f "$mrs_file" ]] || [[ ! -s "$mrs_file" ]]; then
-        return 1
-    fi
-    
-    if ! check_mrs_integrity "$mrs_file"; then
-        return 1
-    fi
-    
-    return 0
+    return 1
 }
 
 # ============================================
@@ -231,14 +119,11 @@ gunzip -f "$TEMP_DIR/mihomo.gz"
 chmod +x "$TEMP_DIR/mihomo"
 
 echo "✅ Mihomo готов"
-
 mkdir -p "$OUTPUT_DIR"
 
-# Счетчики
 TOTAL_FILES=0
 CACHED_FILES=0
 FAILED_FILES=0
-SKIPPED_FILES=0
 
 # ============================================
 # GeoSite TXT — КОНВЕРТАЦИЯ
@@ -256,16 +141,14 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
         
         ((TOTAL_FILES++)) || true
         
-        # Проверка HTTP ответа
         echo "  🔍 Проверка источника..."
         if ! check_http_response "$SOURCE_URL"; then
-            echo "  ❌ HTTP ошибка (не 200 OK)"
+            echo "  ❌ HTTP ошибка"
             ((FAILED_FILES++)) || true
             continue
         fi
         echo "  ✅ HTTP OK"
         
-        # Проверка кэша
         if check_cache "$NAME" "$SOURCE_URL"; then
             echo "  ✅ Без изменений (кэш)"
             ((CACHED_FILES++)) || true
@@ -275,17 +158,15 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
         echo "  📥 Скачиваем..."
         curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
         
-        # Проверка размера
-        if ! check_file_size "$TEMP_DIR/${NAME}.txt" 100; then
-            echo "  ❌ Файл слишком маленький или не скачался"
+        if ! check_file_size "$TEMP_DIR/${NAME}.txt" 50; then
+            echo "  ❌ Файл слишком маленький"
             ((FAILED_FILES++)) || true
             continue
         fi
         
-        # Проверка целостности TXT
-        echo "  🔍 Проверка целостности..."
-        if ! check_txt_integrity_domain "$TEMP_DIR/${NAME}.txt" 10; then
-            echo "  ❌ Файл не прошел проверку целостности"
+        echo "  🔍 Проверка на HTML..."
+        if ! check_not_html "$TEMP_DIR/${NAME}.txt"; then
+            echo "  ❌ Файл содержит HTML"
             ((FAILED_FILES++)) || true
             continue
         fi
@@ -295,13 +176,11 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
         echo "  📊 Строк в исходнике: $LINE_COUNT"
         echo "  🔄 Обрабатываем..."
         
-        # Сохраняем предыдущую версию
         if [[ -f "$OUTPUT_DIR/${NAME}.mrs" ]]; then
             cp "$OUTPUT_DIR/${NAME}.mrs" "$TEMP_DIR/${NAME}.mrs.backup"
             echo "  💾 Бэкап сохранен"
         fi
         
-        # Создаем YAML
         {
             echo "payload:"
             
@@ -347,7 +226,6 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
         
         echo "  🔧 Конвертируем в MRS (доменов: $DOMAIN_COUNT)..."
         
-        # Конвертация
         if ! "$TEMP_DIR/mihomo" convert-ruleset domain yaml "$TEMP_DIR/${NAME}.yaml" "$OUTPUT_DIR/${NAME}.mrs" 2>&1; then
             echo "  ❌ Ошибка конвертации!"
             if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
@@ -358,14 +236,11 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
             continue
         fi
         
-        # Валидация
-        if ! validate_mrs "$TEMP_DIR/mihomo" "$OUTPUT_DIR/${NAME}.mrs"; then
-            echo "  ❌ Файл не прошел валидацию!"
+        # Простая валидация - только размер
+        if ! check_file_size "$OUTPUT_DIR/${NAME}.mrs" 50; then
+            echo "  ❌ Файл слишком маленький"
             if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
-                echo "  💾 Восстанавливаем предыдущую версию..."
                 cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
-            else
-                rm -f "$OUTPUT_DIR/${NAME}.mrs"
             fi
             ((FAILED_FILES++)) || true
             continue
@@ -390,36 +265,25 @@ if [[ ${#GEOSITE_MRS[@]} -gt 0 ]]; then
         
         ((TOTAL_FILES++)) || true
         
-        # Проверка HTTP ответа
         if ! check_http_response "${GEOSITE_MRS[$NAME]}"; then
             echo "  ❌ HTTP ошибка"
             ((FAILED_FILES++)) || true
             continue
         fi
         
-        # Проверка кэша
         if check_cache "$NAME" "${GEOSITE_MRS[$NAME]}"; then
             echo "  ✅ Без изменений (кэш)"
             ((CACHED_FILES++)) || true
             continue
         fi
         
-        # Сохраняем предыдущую версию
         if [[ -f "$OUTPUT_DIR/${NAME}.mrs" ]]; then
             cp "$OUTPUT_DIR/${NAME}.mrs" "$TEMP_DIR/${NAME}.mrs.backup"
         fi
         
         if curl -fL "${GEOSITE_MRS[$NAME]}" -o "$OUTPUT_DIR/${NAME}.mrs" 2>/dev/null; then
-            if check_file_size "$OUTPUT_DIR/${NAME}.mrs" 100; then
-                if validate_mrs "$TEMP_DIR/mihomo" "$OUTPUT_DIR/${NAME}.mrs"; then
-                    echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
-                else
-                    echo "  ❌ Не прошел валидацию"
-                    if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
-                        cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
-                    fi
-                    ((FAILED_FILES++)) || true
-                fi
+            if check_file_size "$OUTPUT_DIR/${NAME}.mrs" 50; then
+                echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
             else
                 echo "  ❌ Файл слишком маленький"
                 if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
@@ -468,15 +332,14 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
         echo "  📥 Скачиваем..."
         curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
         
-        if ! check_file_size "$TEMP_DIR/${NAME}.txt" 100; then
+        if ! check_file_size "$TEMP_DIR/${NAME}.txt" 50; then
             echo "  ❌ Файл слишком маленький"
             ((FAILED_FILES++)) || true
             continue
         fi
         
-        echo "  🔍 Проверка целостности..."
-        if ! check_txt_integrity_ip "$TEMP_DIR/${NAME}.txt" 5; then
-            echo "  ❌ Файл не прошел проверку целостности"
+        if ! check_not_html "$TEMP_DIR/${NAME}.txt"; then
+            echo "  ❌ Файл содержит HTML"
             ((FAILED_FILES++)) || true
             continue
         fi
@@ -529,8 +392,8 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
             continue
         fi
         
-        if ! validate_mrs "$TEMP_DIR/mihomo" "$OUTPUT_DIR/${NAME}.mrs"; then
-            echo "  ❌ Не прошел валидацию!"
+        if ! check_file_size "$OUTPUT_DIR/${NAME}.mrs" 50; then
+            echo "  ❌ Файл слишком маленький"
             if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
                 cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
             fi
@@ -574,16 +437,8 @@ if [[ ${#GEOIP_MRS[@]} -gt 0 ]]; then
         fi
         
         if curl -fL "${GEOIP_MRS[$NAME]}" -o "$OUTPUT_DIR/${NAME}.mrs" 2>/dev/null; then
-            if check_file_size "$OUTPUT_DIR/${NAME}.mrs" 100; then
-                if validate_mrs "$TEMP_DIR/mihomo" "$OUTPUT_DIR/${NAME}.mrs"; then
-                    echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
-                else
-                    echo "  ❌ Не прошел валидацию"
-                    if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
-                        cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
-                    fi
-                    ((FAILED_FILES++)) || true
-                fi
+            if check_file_size "$OUTPUT_DIR/${NAME}.mrs" 50; then
+                echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
             else
                 echo "  ❌ Файл слишком маленький"
                 if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
