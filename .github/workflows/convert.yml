@@ -1,4 +1,4 @@
-name: Convert Russia Rules to MRS
+name: Convert to MRS
 
 on:
   schedule:
