@@ -2,8 +2,8 @@ name: Convert ru-blocked to MRS
 
 on:
   schedule:
-    # Запуск каждый день в 03:00 UTC
-    - cron: '0 3 * * *'
+    # Запуск каждые 6 часов (в 00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
   workflow_dispatch: # Ручной запуск
 
 permissions:
