@@ -1,4 +1,4 @@
-name: Convert to MRS
+name: Convert Russia Rules to MRS
 
 on:
   schedule:
@@ -22,10 +22,15 @@ jobs:
           chmod +x scripts/convert.sh
           ./scripts/convert.sh
 
+      - name: Generate commit message
+        id: commit_msg
+        run: |
+          echo "message=Update rules [Build #${{ github.run_number }}] - $(date '+%Y-%m-%d %H:%M MSK')" >> $GITHUB_OUTPUT
+
       - name: Commit and push if changed
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: 'chore: update rules [auto]'
+          commit_message: ${{ steps.commit_msg.outputs.message }}
           file_pattern: 'output/*.mrs'
           commit_user_name: 'github-actions[bot]'
           commit_user_email: 'github-actions[bot]@users.noreply.github.com'
