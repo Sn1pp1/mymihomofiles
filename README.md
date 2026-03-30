@@ -226,7 +226,7 @@ rule-providers:
     behavior: domain
     format: mrs
     interval: 21600
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/telegram.mrs
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/telegram.mrs
     path: ./rule-sets/telegram.mrs
     proxy: 🛡️ VPN
   telegram-ip:
@@ -234,7 +234,7 @@ rule-providers:
     behavior: ipcidr
     format: mrs
     interval: 21600
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/telegram.mrs
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/telegram-ip.mrs
     path: ./rule-sets/telegram-ip.mrs
     proxy: 🛡️ VPN
   meta:
@@ -242,7 +242,7 @@ rule-providers:
     behavior: domain
     format: mrs
     interval: 21600
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/meta.mrs
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/meta.mrs
     path: ./rule-sets/meta.mrs
     proxy: 🛡️ VPN
   meta-ip:
@@ -257,7 +257,7 @@ rule-providers:
     type: http
     behavior: domain
     format: mrs
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/discord.mrs
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/discord.mrs
     path: ./rule-sets/discord.mrs
     interval: 21600
     proxy: 🛡️ VPN
@@ -273,7 +273,7 @@ rule-providers:
     type: http
     behavior: domain
     format: mrs
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/youtube.mrs
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/youtube.mrs
     path: ./rule-sets/youtube.mrs
     interval: 21600
     proxy: 🛡️ VPN
