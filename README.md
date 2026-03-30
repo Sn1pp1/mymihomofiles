@@ -12,4 +12,4 @@
 - **Источники**: 
   - [runetfreedom/russia-blocked-geosite](https://github.com/runetfreedom/russia-blocked-geosite) — доменные правила
   - [runetfreedom/russia-blocked-geoip](https://github.com/runetfreedom/russia-blocked-geoip) — IP-правила
-  - Кастомные списки (настраиваются в `scripts/convert.sh`)
+  - Кастомные списки
