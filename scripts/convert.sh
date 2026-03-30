@@ -106,19 +106,27 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
                 grep -v '^[[:space:]]*$' | \
                 parse_domain_fast | \
                 grep -v '^$' | \
-                grep -vi '^regexp' | \
-                grep -vi '^regex' | \
-                grep -vi '^keyword' | \
-                grep -vi '^domain-keyword' | \
-                grep -vi '^host-keyword' | \
-                grep -vi '^url-regex' | \
-                grep -vi '^user-agent' | \
-                grep -vi '^script' | \
-                grep -vi '^and\|or\|not' | \
-                grep -vi '^process-' | \
-                grep -vi '^port' | \
-                grep -vi '^network' | \
-                grep -vi '^in-' | \
+                # Удаляем ТОЛЬКО строки которые НАЧИНАЮТСЯ с этих префиксов (с двоеточием!)
+                grep -v '^regexp:' | \
+                grep -v '^regex:' | \
+                grep -v '^keyword:' | \
+                grep -v '^domain-keyword:' | \
+                grep -v '^host-keyword:' | \
+                grep -v '^url-regex:' | \
+                grep -v '^user-agent:' | \
+                grep -v '^script:' | \
+                grep -v '^and:' | \
+                grep -v '^or:' | \
+                grep -v '^not:' | \
+                grep -v '^process-name:' | \
+                grep -v '^process-path:' | \
+                grep -v '^port:' | \
+                grep -v '^dst-port:' | \
+                grep -v '^src-port:' | \
+                grep -v '^network:' | \
+                grep -v '^in-port:' | \
+                grep -v '^in-name:' | \
+                grep -v '^in-type:' | \
                 while IFS= read -r domain; do
                     # Проверяем что домен не пустой и не содержит пробелов
                     if [[ -n "$domain" && ! "$domain" =~ [[:space:]] ]]; then
@@ -202,10 +210,11 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
                 grep -v '^[[:space:]]*$' | \
                 parse_ipcidr_fast | \
                 grep -v '^$' | \
-                grep -vi '^geoip' | \
-                grep -vi '^process-' | \
-                grep -vi '^port' | \
-                grep -vi '^network' | \
+                grep -v '^geoip:' | \
+                grep -v '^process-name:' | \
+                grep -v '^process-path:' | \
+                grep -v '^port:' | \
+                grep -v '^network:' | \
                 while IFS= read -r ip; do
                     if [[ -n "$ip" && ! "$ip" =~ [[:space:]] ]]; then
                         echo "  - '$ip'"
