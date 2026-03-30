@@ -25,7 +25,7 @@ jobs:
       - name: Generate commit message
         id: commit_msg
         run: |
-          echo "message=Update rules [Build #${{ github.run_number }}] - $(date '+%Y-%m-%d %H:%M MSK')" >> $GITHUB_OUTPUT
+          echo "message=Update rules [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')" >> $GITHUB_OUTPUT
 
       - name: Commit and push if changed
         uses: stefanzweifel/git-auto-commit-action@v5
