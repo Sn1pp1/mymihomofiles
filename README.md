@@ -167,45 +167,45 @@ dns:
     - 77.88.8.8
   
   nameserver:
-    - https://1.1.1.1/dns-query#🌍  Global
-    - https://8.8.8.8/dns-query#🌍  Global
-    - tls://1.1.1.1#🌍  Global
-    - tls://8.8.8.8#🌍  Global
+    - https://1.1.1.1/dns-query#🌍 Global
+    - https://8.8.8.8/dns-query#🌍 Global
+    - tls://1.1.1.1#🌍 Global
+    - tls://8.8.8.8#🌍 Global
 
 proxies:
-  - name: "🚀 Без VPN"
+  - name: "⚪️🔵🔴 Без VPN"
     type: direct
     udp: true
   - name: DNS-OUT
     type: dns
 
 proxy-groups:
-  - name: 🚫 VPN
-    icon: https://cdn.jsdelivr.net/gh/remnawave/templates@main/icons/Blocked.png  
+  - name: 🔒 VPN
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Lock.png  
     type: select
     proxies:
       - 🎲 Auto
-      - 🚀 Без VPN
+      - ⚪️🔵🔴 Без VPN
 
   - name: ▶️ YouTube
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
     type: select
     proxies:
-      - 🚫 VPN
+      - 🔒 VPN
 
   - name: ➤ Telegram
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png
     type: select
     proxies:
-      - 🚫 VPN
-      - 🚀 Без VPN
+      - 🔒 VPN
+      - ⚪️🔵🔴 Без VPN
 
-  - name: 🌍  Global
+  - name: 🌍 Global
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png
     type: select
     proxies:
-      - 🚀 Без VPN
-      - 🚫 VPN
+      - ⚪️🔵🔴 Без VPN
+      - 🔒 VPN
 
   - name: 🎲 Auto
     type: url-test
@@ -224,7 +224,7 @@ proxy-groups:
       include-proxies: true
     hidden: true
     proxies:
-      - 🚫 VPN
+      - 🔒 VPN
 
 rule-providers:
   category-ads:
@@ -233,7 +233,7 @@ rule-providers:
     format: mrs
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/category-ads.mrs
     path: ./rule-sets/category-ads.mrs
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
     interval: 21600
   private:
     type: http
@@ -242,7 +242,7 @@ rule-providers:
     interval: 21600
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/private.mrs
     path: ./rule-sets/private.mrs
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   private-ip:
     type: http
     behavior: ipcidr
@@ -250,7 +250,7 @@ rule-providers:
     interval: 21600
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/private-ip.mrs
     path: ./rule-sets/private-ip.mrs
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   telegram:
     type: http
     behavior: domain
@@ -258,7 +258,7 @@ rule-providers:
     interval: 21600
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/telegram.mrs
     path: ./rule-sets/telegram.mrs
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   telegram-ip:
     type: http
     behavior: ipcidr
@@ -266,7 +266,7 @@ rule-providers:
     interval: 21600
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/telegram-ip.mrs
     path: ./rule-sets/telegram-ip.mrs
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   meta:
     type: http
     behavior: domain
@@ -274,7 +274,7 @@ rule-providers:
     interval: 21600
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/meta.mrs
     path: ./rule-sets/meta.mrs
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   meta-ip:
     type: http
     behavior: ipcidr
@@ -282,7 +282,7 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/meta-ip.mrs
     path: ./rule-sets/meta-ip.mrs
     interval: 21600
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   discord:
     type: http
     behavior: domain
@@ -290,7 +290,7 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/discord.mrs
     path: ./rule-sets/discord.mrs
     interval: 21600
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   discord-ip:
     type: http
     behavior: ipcidr
@@ -298,7 +298,7 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/discord-ip.mrs
     path: ./rule-sets/discord-ip.mrs
     interval: 21600
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   youtube:
     type: http
     behavior: domain
@@ -306,7 +306,7 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/youtube.mrs
     path: ./rule-sets/youtube.mrs
     interval: 21600
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   ru-blocked:
     type: http
     behavior: domain
@@ -314,7 +314,7 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocked.mrs
     path: ./rule-sets/ru-blocked.mrs
     interval: 86400
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   ru-blocked-ip:
     type: http
     behavior: ipcidr
@@ -322,7 +322,7 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocked-ip.mrs
     path: ./rule-sets/ru-blocked-ip.mrs
     interval: 21600
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   ru-blocked-community-ip:
     type: http
     behavior: ipcidr
@@ -330,7 +330,7 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocked-community-ip.mrs
     path: ./rule-sets/ru-blocked-community-ip.mrs
     interval: 21600
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   domain-list:
     type: http
     behavior: domain
@@ -338,7 +338,7 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/domain-list.mrs
     path: ./rule-sets/domain-list.mrs
     interval: 21600
-    proxy: 🚫 VPN
+    proxy: 🔒 VPN
   quic:
     type: inline
     behavior: classical
@@ -354,16 +354,16 @@ rules:
   - RULE-SET,telegram,➤ Telegram
   - RULE-SET,telegram-ip,➤ Telegram
   - PROCESS-NAME,Telegram.exe,➤ Telegram
-  - RULE-SET,meta,🚫 VPN
-  - RULE-SET,meta-ip,🚫 VPN
-  - RULE-SET,discord,🚫 VPN
-  - RULE-SET,discord-ip,🚫 VPN
-  - PROCESS-NAME,Discord.exe,🚫 VPN
+  - RULE-SET,meta,🔒 VPN
+  - RULE-SET,meta-ip,🔒 VPN
+  - RULE-SET,discord,🔒 VPN
+  - RULE-SET,discord-ip,🔒 VPN
+  - PROCESS-NAME,Discord.exe,🔒 VPN
   - RULE-SET,youtube,▶️ YouTube
-  - RULE-SET,ru-blocked,🚫 VPN
-  - RULE-SET,ru-blocked-ip,🚫 VPN
-  - RULE-SET,ru-blocked-community-ip,🚫 VPN
-  - RULE-SET,domain-list,🚫 VPN
-  - MATCH,🌍  Global
+  - RULE-SET,ru-blocked,🔒 VPN
+  - RULE-SET,ru-blocked-ip,🔒 VPN
+  - RULE-SET,ru-blocked-community-ip,🔒 VPN
+  - RULE-SET,domain-list,🔒 VPN
+  - MATCH,🌍 Global
 ```
 </details>
