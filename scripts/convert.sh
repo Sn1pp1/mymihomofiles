@@ -101,7 +101,7 @@ declare -A GEOIP_MRS=(
     ["refilter-ip"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geoip/release/mrs/re-filter.mrs"
     ["telegram-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.mrs"
     ["meta-ip"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/meta_ipcidr.mrs"
-    ["discord-ip"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/discord_ipcidr.mrs"
+    ["discord-ip"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/other/discord-voice-ip-list.mrs"
 )
 
 # ============================================
