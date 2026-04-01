@@ -170,8 +170,9 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
         echo "  📥 Скачиваем..."
         curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
         
-        if ! check_file_size "$TEMP_DIR/${NAME}.txt" 50; then
-            echo "  ❌ Файл слишком маленький"
+        # 🔧 ИСПРАВЛЕНО: мин. размер 1 байт вместо 50
+        if ! check_file_size "$TEMP_DIR/${NAME}.txt" 1; then
+            echo "  ❌ Файл не скачался"
             ((FAILED_FILES++)) || true
             continue
         fi
@@ -344,8 +345,9 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
         echo "  📥 Скачиваем..."
         curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
         
-        if ! check_file_size "$TEMP_DIR/${NAME}.txt" 50; then
-            echo "  ❌ Файл слишком маленький"
+        # 🔧 ИСПРАВЛЕНО: мин. размер 1 байт вместо 50
+        if ! check_file_size "$TEMP_DIR/${NAME}.txt" 1; then
+            echo "  ❌ Файл не скачался"
             ((FAILED_FILES++)) || true
             continue
         fi
