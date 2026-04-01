@@ -93,8 +93,7 @@ declare -A GEOSITE_MRS=(
 )
 
 declare -A GEOIP_TXT=(
-    ["discord-ipv4"]="https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/discord.lst"
-    ["discord-ipv6"]="https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/discord.lst"
+    
 )
 
 declare -A GEOIP_MRS=(
