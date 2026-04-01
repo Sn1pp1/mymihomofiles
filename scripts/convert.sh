@@ -170,7 +170,7 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
         echo "  📥 Скачиваем..."
         curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
         
-        # 🔧 ИСПРАВЛЕНО: мин. размер 1 байт вместо 50
+        # Мин. размер для TXT: 1 байт
         if ! check_file_size "$TEMP_DIR/${NAME}.txt" 1; then
             echo "  ❌ Файл не скачался"
             ((FAILED_FILES++)) || true
@@ -249,9 +249,9 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
             continue
         fi
         
-        # Простая валидация - только размер
-        if ! check_file_size "$OUTPUT_DIR/${NAME}.mrs" 50; then
-            echo "  ❌ Файл слишком маленький"
+        # 🔧 ИСПРАВЛЕНО: мин. размер для MRS: 1 байт
+        if ! check_file_size "$OUTPUT_DIR/${NAME}.mrs" 1; then
+            echo "  ❌ Файл пустой"
             if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
                 cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
             fi
@@ -295,10 +295,11 @@ if [[ ${#GEOSITE_MRS[@]} -gt 0 ]]; then
         fi
         
         if curl -fL "${GEOSITE_MRS[$NAME]}" -o "$OUTPUT_DIR/${NAME}.mrs" 2>/dev/null; then
-            if check_file_size "$OUTPUT_DIR/${NAME}.mrs" 50; then
+            # 🔧 ИСПРАВЛЕНО: мин. размер для MRS: 1 байт
+            if check_file_size "$OUTPUT_DIR/${NAME}.mrs" 1; then
                 echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
             else
-                echo "  ❌ Файл слишком маленький"
+                echo "  ❌ Файл пустой"
                 if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
                     cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
                 fi
@@ -345,7 +346,7 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
         echo "  📥 Скачиваем..."
         curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
         
-        # 🔧 ИСПРАВЛЕНО: мин. размер 1 байт вместо 50
+        # Мин. размер для TXT: 1 байт
         if ! check_file_size "$TEMP_DIR/${NAME}.txt" 1; then
             echo "  ❌ Файл не скачался"
             ((FAILED_FILES++)) || true
@@ -406,8 +407,9 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
             continue
         fi
         
-        if ! check_file_size "$OUTPUT_DIR/${NAME}.mrs" 50; then
-            echo "  ❌ Файл слишком маленький"
+        # 🔧 ИСПРАВЛЕНО: мин. размер для MRS: 1 байт
+        if ! check_file_size "$OUTPUT_DIR/${NAME}.mrs" 1; then
+            echo "  ❌ Файл пустой"
             if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
                 cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
             fi
@@ -451,10 +453,11 @@ if [[ ${#GEOIP_MRS[@]} -gt 0 ]]; then
         fi
         
         if curl -fL "${GEOIP_MRS[$NAME]}" -o "$OUTPUT_DIR/${NAME}.mrs" 2>/dev/null; then
-            if check_file_size "$OUTPUT_DIR/${NAME}.mrs" 50; then
+            # 🔧 ИСПРАВЛЕНО: мин. размер для MRS: 1 байт
+            if check_file_size "$OUTPUT_DIR/${NAME}.mrs" 1; then
                 echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
             else
-                echo "  ❌ Файл слишком маленький"
+                echo "  ❌ Файл пустой"
                 if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
                     cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
                 fi
