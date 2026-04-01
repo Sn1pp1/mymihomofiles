@@ -12,6 +12,7 @@
 - **Источники**: 
   - [runetfreedom/russia-blocked-geosite](https://github.com/runetfreedom/russia-blocked-geosite) — доменные правила
   - [runetfreedom/russia-blocked-geoip](https://github.com/runetfreedom/russia-blocked-geoip) — IP-правила
+  - [legiz-ru/mihomo-rule-sets](https://github.com/legiz-ru/mihomo-rule-sets) - доменные списки / IP-диапазоны
   - [itdoginfo/allow-domains](https://github.com/itdoginfo/allow-domains) - доменные списки / IP-диапазоны
   - [roscomvpn-geoip](https://github.com/hydraponique/roscomvpn-geoip) — IP-диапазоны
   - [roscomvpn-geosite](https://github.com/hydraponique/roscomvpn-geosite) — доменные списки
