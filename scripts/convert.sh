@@ -79,6 +79,7 @@ declare -A GEOSITE_TXT=(
     ["ru-blocked"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/ru-blocked.txt"
     ["refilter"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/refilter.txt"
     ["domain-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
+    ["category-ads-all"]="https://github.com/runetfreedom/russia-blocked-geosite/raw/refs/heads/release/category-ads-all.txt"
 )
 
 declare -A GEOSITE_MRS=(
@@ -91,6 +92,8 @@ declare -A GEOSITE_MRS=(
     ["google-deepmind"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-deepmind.mrs"
     ["google-play"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-play.mrs"
     ["norussiahosts"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/ru-bundle/no-russia-hosts.mrs"
+    ["oisd-big"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/oisd/big.mrs"
+    
 )
 
 declare -A GEOIP_TXT=(
