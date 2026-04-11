@@ -93,6 +93,7 @@ declare -A GEOSITE_MRS=(
     ["google-play"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-play.mrs"
     ["norussiahosts"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/ru-bundle/no-russia-hosts.mrs"
     ["oisd-big"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/oisd/big.mrs"
+    ["category-ru"]="https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/rules/category-ru.mrs"
     
 )
 
@@ -108,6 +109,7 @@ declare -A GEOIP_MRS=(
     ["telegram-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.mrs"
     ["meta-ip"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/meta_ipcidr.mrs"
     ["discord-ip"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/discord_ipcidr.mrs"
+    ["category-ru-ip"]="https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/ip-for-ru/lists/ips-for-ru.mrs"
 )
 
 # ============================================
