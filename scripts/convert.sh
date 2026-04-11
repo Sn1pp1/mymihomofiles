@@ -76,25 +76,25 @@ check_cache() {
 # ============================================
 
 declare -A GEOSITE_TXT=(
+    ["category-ads-all"]="https://github.com/runetfreedom/russia-blocked-geosite/raw/refs/heads/release/category-ads-all.txt"
     ["ru-blocked"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/ru-blocked.txt"
     ["refilter"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/refilter.txt"
     ["domain-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
-    ["category-ads-all"]="https://github.com/runetfreedom/russia-blocked-geosite/raw/refs/heads/release/category-ads-all.txt"
 )
 
 declare -A GEOSITE_MRS=(
-    ["private"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"
     ["category-ads"]="https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/mihomo/category-ads.mrs"
+    ["oisd-big"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/oisd/big.mrs"
+    ["oisd-small"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/oisd/small.mrs"
+    ["private"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"
+    ["category-ru"]="https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/rules/category-ru.mrs"
     ["telegram"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/telegram.mrs"
     ["meta"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/meta.mrs"
     ["discord"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/discord.mrs"
     ["youtube"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.mrs"
     ["google-deepmind"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-deepmind.mrs"
     ["google-play"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-play.mrs"
-    ["norussiahosts"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/ru-bundle/no-russia-hosts.mrs"
-    ["oisd-big"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/oisd/big.mrs"
-    ["category-ru"]="https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/rules/category-ru.mrs"
-    
+    ["norussiahosts"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/ru-bundle/no-russia-hosts.mrs"  
 )
 
 declare -A GEOIP_TXT=(
@@ -103,13 +103,13 @@ declare -A GEOIP_TXT=(
 
 declare -A GEOIP_MRS=(
     ["private-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"
+    ["category-ru-ip"]="https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/ip-for-ru/lists/ips-for-ru.mrs"
     ["ru-blocked-ip"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geoip/release/mrs/ru-blocked.mrs"
     ["ru-blocked-community-ip"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geoip/release/mrs/ru-blocked-community.mrs"
     ["refilter-ip"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geoip/release/mrs/re-filter.mrs"
     ["telegram-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.mrs"
     ["meta-ip"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/meta_ipcidr.mrs"
     ["discord-ip"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/discord_ipcidr.mrs"
-    ["category-ru-ip"]="https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/ip-for-ru/lists/ips-for-ru.mrs"
 )
 
 # ============================================
