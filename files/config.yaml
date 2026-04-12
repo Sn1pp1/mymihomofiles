@@ -131,7 +131,13 @@ dns:
     - https://8.8.8.8/dns-query
     - tls://1.1.1.1
     - tls://8.8.8.8
-  
+
+  proxy-server-nameserver:
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+    - tls://1.1.1.1
+    - tls://8.8.8.8
+
   direct-nameserver:
     - https://1.1.1.1/dns-query
     - https://8.8.8.8/dns-query
@@ -171,34 +177,6 @@ proxies:
     type: dns
 
 proxy-groups:
-  - name: ⚪🔵🔴 RU сайты
-    type: select
-    remnawave:
-      include-proxies: false
-    hidden: true
-    proxies:
-      - 🚀 Без VPN
-
-  - name: PROXY
-    type: select
-    remnawave:
-      include-proxies: true
-    hidden: true
-    proxies:
-      - 🔒 VPN
-
-  - name: 🎲 Auto
-    type: url-test
-    remnawave:
-      include-proxies: true
-      shuffle-proxies-order: true
-    hidden: true
-    url: https://cp.cloudflare.com/generate_204
-    interval: 300
-    tolerance: 100
-    lazy: true
-    max-failed-times: 3
-
   - name: 🔒 VPN
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Lock.png  
     type: select
@@ -225,6 +203,34 @@ proxy-groups:
     proxies:
       - 🚀 Без VPN
       - 🔒 VPN
+
+  - name: 🎲 Auto
+    type: url-test
+    remnawave:
+      include-proxies: true
+      shuffle-proxies-order: true
+    hidden: true
+    url: https://cp.cloudflare.com/generate_204
+    interval: 300
+    tolerance: 100
+    lazy: true
+    max-failed-times: 3
+
+  - name: PROXY
+    type: select
+    remnawave:
+      include-proxies: true
+    hidden: true
+    proxies:
+      - 🔒 VPN
+  
+  - name: ⚪🔵🔴 RU сайты
+    type: select
+    remnawave:
+      include-proxies: false
+    hidden: true
+    proxies:
+      - 🚀 Без VPN
 
 rule-providers:
   category-ads:
