@@ -140,8 +140,6 @@ dns:
     - https://77.88.8.8/dns-query
     - tls://77.88.8.8
     - 77.88.8.8
-    - 195.208.4.1
-    - 195.208.5.1
   
   nameserver:
     - https://1.1.1.1/dns-query#🔒 VPN
