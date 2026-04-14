@@ -1,0 +1,326 @@
+remnawave:
+  includeHiddenHosts: false
+
+x-anchors:
+  reserved_ips: &reserved_ips
+    - 0.0.0.0/8
+    - 10.0.0.0/8
+    - 100.64.0.0/10
+    - 127.0.0.0/8
+    - 169.254.0.0/16
+    - 172.16.0.0/12
+    - 192.0.0.0/24
+    - 192.0.2.0/24
+    - 192.88.99.0/24
+    - 192.168.0.0/16
+    - 198.51.100.0/24
+    - 203.0.113.0/24
+    - 224.0.0.0/3
+
+  dns_direct: &dns_direct
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+    - tls://1.1.1.1
+    - tls://8.8.8.8
+
+  dns_ru: &dns_ru
+    - https://77.88.8.8/dns-query
+    - tls://77.88.8.8
+    - 77.88.8.8
+    - 195.208.4.1
+
+  dns_vpn: &dns_vpn
+    - https://1.1.1.1/dns-query#🔒 VPN
+    - https://8.8.8.8/dns-query#🔒 VPN
+    - tls://1.1.1.1#🔒 VPN
+    - tls://8.8.8.8#🔒 VPN
+
+  rp_base: &rp_base
+    type: http
+    interval: 43200
+    proxy: 🔒 VPN
+
+  rp_domain: &rp_domain
+    <<: *rp_base
+    behavior: domain
+    format: mrs
+
+  rp_ipcidr: &rp_ipcidr
+    <<: *rp_base
+    behavior: ipcidr
+    format: mrs
+
+mixed-port: 7890
+allow-lan: false
+bind-address: "*"
+lan-allowed-ips: *reserved_ips
+
+tcp-concurrent: true
+enable-process: true
+find-process-mode: strict
+mode: rule
+log-level: info
+ipv6: false
+keep-alive-interval: 30
+unified-delay: true
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: true
+  skip-dst-address: *reserved_ips
+  
+  skip-domain:
+    - "+.lan"
+    - "+.local"
+    - "+.mvideo.ru"
+
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+    TLS:
+      ports: [443, 8443]
+
+tun:
+  enable: true
+  stack: gvisor
+  auto-route: true
+  auto-detect-interface: true
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+  strict-route: false
+  mtu: 1400
+  endpoint-independent-nat: true
+  route-exclude-address: *reserved_ips
+
+dns:
+  enable: true
+  prefer-h3: false
+  cache-algorithm: ARC
+  cache-size: 4096
+  use-hosts: true
+  use-system-hosts: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  
+  fake-ip-filter:
+    - rule-set:private
+    - "*.lan"
+    - "*.local"
+    - "*.localdomain"
+    - "*.workgroup"
+    - "*.home"
+    - "*.internal"
+    - "*.corp.*"
+    - "+.mvideo.ru"
+    - "*.corp.mvideo.ru"
+    - "*.private"
+    - "localhost"
+    - "localhost.*"
+    - "*.msftncsi.com"
+    - "*.msftconnecttest.com"
+    - "*.gstatic.com"
+    - "clients3.google.com"
+    - "*.apple.com"
+    - "*.icloud.com"
+
+  proxy-server-nameserver: *dns_direct
+
+  default-nameserver: *dns_direct
+
+  direct-nameserver:
+    - *dns_direct
+    - *dns_ru
+
+  nameserver: *dns_vpn
+  
+  nameserver-policy:
+    "rule-set:private":
+      - system
+    "rule-set:category-ru": *dns_ru
+    "rule-set:category-ru-ip": *dns_ru
+
+proxies:
+  - name: "♻️ Без VPN"
+    type: direct
+    udp: true
+  - name: DNS-OUT
+    type: dns
+
+proxy-groups:
+  - name: 🔒 VPN
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Lock.png
+    type: select
+    proxies: [🎲 Auto, ️ Без VPN]
+
+  - name: ▶️ YouTube
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
+    type: select
+    proxies: [🔒 VPN, ♻️ Без VPN]
+
+  - name: ➤ Telegram
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png
+    type: select
+    proxies: [🔒 VPN, ♻️ Без VPN]
+
+  - name: 🌍 Остальные сайты
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png
+    type: select
+    proxies: [♻️ Без VPN, 🔒 VPN]
+
+  - name: 🎲 Auto
+    type: url-test
+    remnawave:
+      include-proxies: true
+      shuffle-proxies-order: true
+    hidden: true
+    url: https://cp.cloudflare.com/generate_204
+    interval: 300
+    tolerance: 100
+    lazy: true
+    max-failed-times: 3
+
+  - name: PROXY
+    type: select
+    remnawave:
+      include-proxies: true
+    hidden: true
+    proxies: [🔒 VPN]
+  
+  - name: ⚪🔵🔴 RU сайты
+    type: select
+    remnawave:
+      include-proxies: false
+    hidden: true
+    proxies: [♻️ Без VPN]
+
+rule-providers:
+  category-ads:
+    <<: *rp_domain
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/category-ads.mrs
+    path: ./rule-sets/category-ads.mrs
+  
+  private:
+    <<: *rp_domain
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/private.mrs
+    path: ./rule-sets/private.mrs
+  
+  private-ip:
+    <<: *rp_ipcidr
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/private-ip.mrs
+    path: ./rule-sets/private-ip.mrs
+  
+  category-ru:
+    <<: *rp_domain
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/category-ru.mrs
+    path: ./rule-sets/category-ru.mrs
+  
+  category-ru-ip:
+    <<: *rp_ipcidr
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/category-ru-ip.mrs
+    path: ./rule-sets/category-ru-ip.mrs
+  
+  telegram:
+    <<: *rp_domain
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/telegram.mrs
+    path: ./rule-sets/telegram.mrs
+  
+  telegram-ip:
+    <<: *rp_ipcidr
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/telegram-ip.mrs
+    path: ./rule-sets/telegram-ip.mrs
+  
+  meta:
+    <<: *rp_domain
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/meta.mrs
+    path: ./rule-sets/meta.mrs
+  
+  meta-ip:
+    <<: *rp_ipcidr
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/meta-ip.mrs
+    path: ./rule-sets/meta-ip.mrs
+  
+  discord:
+    <<: *rp_domain
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/discord.mrs
+    path: ./rule-sets/discord.mrs
+  
+  discord-ip:
+    <<: *rp_ipcidr
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/discord-ip.mrs
+    path: ./rule-sets/discord-ip.mrs
+  
+  youtube:
+    <<: *rp_domain
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/youtube.mrs
+    path: ./rule-sets/youtube.mrs
+  
+  google-deepmind:
+    <<: *rp_domain
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/google-deepmind.mrs
+    path: ./rule-sets/google-deepmind.mrs
+  
+  google-play:
+    <<: *rp_domain
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/google-play.mrs
+    path: ./rule-sets/google-play.mrs
+  
+  ru-blocked:
+    <<: *rp_domain
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocked.mrs
+    path: ./rule-sets/ru-blocked.mrs
+  
+  ru-blocked-ip:
+    <<: *rp_ipcidr
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocked-ip.mrs
+    path: ./rule-sets/ru-blocked-ip.mrs
+  
+  ru-blocked-community-ip:
+    <<: *rp_ipcidr
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocked-community-ip.mrs
+    path: ./rule-sets/ru-blocked-community-ip.mrs
+  
+  domain-list:
+    <<: *rp_domain
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/domain-list.mrs
+    path: ./rule-sets/domain-list.mrs
+  
+  quic:
+    type: inline
+    behavior: classical
+    payload:
+      - AND,((NETWORK,udp),(DST-PORT,443))
+
+rules:
+  - DST-PORT,53,DNS-OUT
+  - RULE-SET,quic,REJECT
+  - RULE-SET,category-ads,REJECT
+  - RULE-SET,private,♻️ Без VPN
+  - RULE-SET,private-ip,♻️ Без VPN,no-resolve
+  - RULE-SET,category-ru,⚪🔵🔴 RU сайты
+  - RULE-SET,category-ru-ip,⚪🔵🔴 RU сайты
+  - RULE-SET,telegram,➤ Telegram
+  - RULE-SET,telegram-ip,➤ Telegram
+  - PROCESS-NAME,Telegram.exe,➤ Telegram
+  - PROCESS-NAME,tupdate.exe,➤ Telegram
+  - RULE-SET,meta,🔒 VPN
+  - RULE-SET,meta-ip,🔒 VPN
+  - RULE-SET,discord,🔒 VPN
+  - RULE-SET,discord-ip,🔒 VPN
+  - PROCESS-NAME,Discord.exe,🔒 VPN
+  - RULE-SET,youtube,▶️ YouTube
+  - PROCESS-NAME-REGEX,(?i).*youtube.*,▶️ YouTube
+  - RULE-SET,google-deepmind,🔒 VPN
+  - RULE-SET,google-play,🔒 VPN
+  - RULE-SET,ru-blocked,🔒 VPN
+  - RULE-SET,ru-blocked-ip,🔒 VPN
+  - RULE-SET,ru-blocked-community-ip,🔒 VPN
+  - RULE-SET,domain-list,🔒 VPN
+  - MATCH,🌍 Остальные сайты
