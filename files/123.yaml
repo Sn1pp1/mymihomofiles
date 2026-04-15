@@ -103,7 +103,7 @@ dns:
   enable: true
   prefer-h3: false
   cache-algorithm: ARC
-  cache-size: 4096
+  cache-size: 16384
   use-hosts: true
   use-system-hosts: true
   ipv6: false
@@ -133,10 +133,12 @@ dns:
   default-nameserver:
     - https://1.1.1.1/dns-query
     - https://8.8.8.8/dns-query
+    - https://77.88.8.8/dns-query
 
   proxy-server-nameserver:
     - https://1.1.1.1/dns-query
     - https://8.8.8.8/dns-query
+    - https://77.88.8.8/dns-query
 
   direct-nameserver:
     - https://77.88.8.8/dns-query
@@ -152,6 +154,9 @@ dns:
       - system
 
 proxies:
+  - name: "🇷🇺 БезVPN"
+    type: direct
+    udp: true
 
 proxy-groups:
   - name: 🔒 VPN
@@ -172,7 +177,7 @@ proxy-groups:
       include-proxies: false
     type: select
     proxies:
-      - DIRECT
+      - 🇷🇺 БезVPN
       - 🔒 VPN
 
   - name: 🎲 Auto
@@ -322,8 +327,18 @@ rule-providers:
     behavior: classical
     payload:
       - AND,((NETWORK,udp),(DST-PORT,443))
+  ipcheck:
+    type: inline
+    behavior: classical
+    payload:
+      - DOMAIN,ipwho.is
+      - DOMAIN,api.ip.sb
+      - DOMAIN,ipapi.co
+      - DOMAIN,ipinfo.io
+      - DOMAIN,ip-api.com
 
 rules:
+  - RULE-SET,ipcheck,🔒 VPN
   - RULE-SET,quic,REJECT
   - RULE-SET,category-ads,REJECT
   - RULE-SET,private,DIRECT
