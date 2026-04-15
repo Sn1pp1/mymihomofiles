@@ -150,18 +150,6 @@ dns:
   nameserver-policy:
     rule-set:private:
       - system
-    "+.ru":
-      - tls://77.88.8.8
-      - 77.88.8.8
-      - 195.208.4.1
-    "+.su":
-      - tls://77.88.8.8
-      - 77.88.8.8
-      - 195.208.4.1
-    "+.xn--p1ai":
-      - tls://77.88.8.8
-      - 77.88.8.8
-      - 195.208.4.1
 
 proxies:
 
@@ -341,11 +329,8 @@ rules:
   - RULE-SET,private,DIRECT
   - RULE-SET,private-ip,DIRECT,no-resolve
   - RULE-SET,youtube,▶️ YouTube
-  - PROCESS-NAME-REGEX,(?i).*youtube.*,▶️ YouTube
   - RULE-SET,telegram,🔒 VPN
   - RULE-SET,telegram-ip,🔒 VPN
-  - PROCESS-NAME,Telegram.exe,🔒 VPN
-  - PROCESS-NAME,tupdate.exe,🔒 VPN
   - RULE-SET,meta,🔒 VPN
   - RULE-SET,meta-ip,🔒 VPN
   - RULE-SET,discord,🔒 VPN
