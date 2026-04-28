@@ -1,8 +1,6 @@
 remnawave:
   includeHiddenHosts: false
 
-external-controller: 127.0.0.1:9090
-
 mixed-port: 7890
 allow-lan: false
 bind-address: "*"
@@ -357,8 +355,8 @@ rule-providers:
 
 rules:
   - RULE-SET,ipcheck,🔒 VPN
-  - RULE-SET,quic,REJECT
-  - RULE-SET,category-ads,REJECT
+  - RULE-SET,quic,REJECT-DROP
+  - RULE-SET,category-ads,REJECT-DROP
   - RULE-SET,private,DIRECT
   - RULE-SET,private-ip,DIRECT,no-resolve
   - RULE-SET,youtube,▶️ YouTube
