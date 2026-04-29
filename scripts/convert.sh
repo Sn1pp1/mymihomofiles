@@ -77,6 +77,7 @@ check_cache() {
 
 declare -A GEOSITE_TXT=(
     ["category-ads-all"]="https://github.com/runetfreedom/russia-blocked-geosite/raw/refs/heads/release/category-ads-all.txt"
+    ["wl-ads"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/wl-ads.txt"
     ["ru-blocked"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/ru-blocked.txt"
     ["refilter"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/refilter.txt"
     ["domain-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
