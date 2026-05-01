@@ -151,6 +151,7 @@ dns:
   nameserver-policy:
     rule-set:private:
       - system
+      - https://77.88.8.8/dns-query
 
 proxies:
   - name: "🇷🇺 БезVPN"
@@ -339,24 +340,10 @@ rule-providers:
     behavior: classical
     payload:
       - AND,((NETWORK,udp),(DST-PORT,443))
-  ipcheck:
-    type: inline
-    behavior: classical
-    payload:
-      - DOMAIN,ipwho.is
-      - DOMAIN,api.myip.com
-      - DOMAIN,ipapi.co
-      - DOMAIN,ident.me
-      - DOMAIN,ip-api.com
-      - DOMAIN,ipinfo.io
-      - DOMAIN,api.ip.sb
-      - DOMAIN,2ip.io
-      - DOMAIN,2ipcore.com
 
 rules:
-  - RULE-SET,ipcheck,🔒 VPN
   - RULE-SET,quic,REJECT-DROP
-  - RULE-SET,category-ads,REJECT-DROP
+  - RULE-SET,category-ads,REJECT
   - RULE-SET,private,DIRECT
   - RULE-SET,private-ip,DIRECT,no-resolve
   - RULE-SET,youtube,▶️ YouTube
