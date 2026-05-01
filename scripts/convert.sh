@@ -78,6 +78,7 @@ check_cache() {
 declare -A GEOSITE_TXT=(
     ["ru-blocked"]="https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/ru-blocked.txt"
     ["domain-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
+    ["ru-app-list"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/other/ru-app-list.yaml"
 )
 
 declare -A GEOSITE_MRS=(
