@@ -39,18 +39,19 @@ echo "🚀 Запуск скрипта объединения правил..."
 # 1. УСТАНОВКА ЗАВИСИМОСТЕЙ (YQ + MIHOMO)
 # ============================================
 
-# Устанавливаем yq (инструмент для парсинга YAML)
+# Устанавливаем yq (используем прямой URL)
 echo "⚙️ Устанавливаем yq..."
-YQ_URL=$(curl -s https://api.github.com/repos/mikefarah/yq/releases/latest | grep "browser_download_url.*linux_amd64" | cut -d '"' -f 4)
-curl -L "$YQ_URL" -o /tmp/yq
+curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /tmp/yq
 chmod +x /tmp/yq
 
-# Скачиваем mihomo (конвертер)
+# Скачиваем mihomo
 echo "⚙️ Скачиваем mihomo..."
-MIHOMO_URL=$(curl -s https://api.github.com/repos/MetaCubeX/mihomo/releases/latest | grep "browser_download_url.*mihomo-linux-amd64-compatible.*\.gz" | cut -d '"' -f 4)
+MIHOMO_LATEST=$(curl -s https://api.github.com/repos/MetaCubeX/mihomo/releases/latest)
+MIHOMO_URL=$(echo "$MIHOMO_LATEST" | grep -o 'https://[^"]*mihomo-linux-amd64-compatible[^"]*\.gz' | head -n 1)
+
 if [ -z "$MIHOMO_URL" ]; then
-    # Fallback, если точное имя изменилось
-    MIHOMO_URL=$(curl -s https://api.github.com/repos/MetaCubeX/mihomo/releases/latest | grep "browser_download_url.*linux-amd64-compatible.*\.gz" | head -n 1 | cut -d '"' -f 4)
+    echo "❌ Не удалось найти URL для mihomo"
+    exit 1
 fi
 
 curl -L "$MIHOMO_URL" -o "$TEMP_DIR/mihomo.gz"
@@ -78,7 +79,7 @@ for category in "${CATEGORY_FILES[@]}"; do
     if curl -sL "$URL" -o "$TEMP_DIR/current.yaml"; then
         # Парсим через yq (достает все элементы списка payload)
         # sed удаляет кавычки (" или ')
-        /tmp/yq '.payload[]' "$TEMP_DIR/current.yaml" | sed "s/[\"']//g" >> "$TEMP_RAW"
+        /tmp/yq '.payload[]' "$TEMP_DIR/current.yaml" 2>/dev/null | sed "s/[\"']//g" >> "$TEMP_RAW"
         echo "✅"
     else
         echo "❌ Ошибка скачивания"
@@ -105,16 +106,19 @@ while IFS= read -r domain; do
 done < "$TEMP_CLEAN"
 
 # Б. Конвертируем в MRS (бинарный формат для mihomo)
-echo "️ Конвертация в MRS..."
+echo "⚙️ Конвертация в MRS..."
 MRS_PATH="${OUTPUT_DIR}/${OUTPUT_NAME}.mrs"
 
 # Конвертируем из YAML в MRS
-"$TEMP_DIR/mihomo" convert-ruleset domain yaml "$YAML_PATH" "$MRS_PATH" 2>/dev/null
+if ! "$TEMP_DIR/mihomo" convert-ruleset domain yaml "$YAML_PATH" "$MRS_PATH" 2>&1; then
+    echo "❌ Ошибка конвертации в MRS"
+    exit 1
+fi
 
 if [ -f "$MRS_PATH" ]; then
     echo "✅ MRS файл создан: $(du -h "$MRS_PATH" | cut -f1)"
 else
-    echo "❌ Ошибка создания MRS"
+    echo "❌ MRS файл не создан"
     exit 1
 fi
 
