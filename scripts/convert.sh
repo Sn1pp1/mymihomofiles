@@ -92,6 +92,12 @@ declare -A GEOSITE_MRS=(
     ["google-deepmind"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-deepmind.mrs"
     ["google-play"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-play.mrs"
     ["cloudflare"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cloudflare.mrs"
+    ["torrent-trackers"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/other/torrent-trackers.mrs"
+)
+
+declare -A GEOSITE_YAML=(
+    ["ru-app-list"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/other/ru-app-list.yaml"
+    ["torrent-clients"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/other/torrent-clients.yaml"
 )
 
 declare -A GEOIP_TXT=(
@@ -107,6 +113,11 @@ declare -A GEOIP_MRS=(
     ["meta-ip"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/meta_ipcidr.mrs"
     ["discord-ip"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/discord_ipcidr.mrs"
     ["cloudflare-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cloudflare.mrs"
+)
+
+declare -A GEOIP_YAML=(
+    # Пример: ["custom-ip"]="https://example.com/ip-rules.yaml"
+    # Добавляйте свои YAML-источники GeoIP здесь:
 )
 
 # ============================================
@@ -172,7 +183,6 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
         echo "  📥 Скачиваем..."
         curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
         
-        # Мин. размер для TXT: 1 байт
         if ! check_file_size "$TEMP_DIR/${NAME}.txt" 1; then
             echo "  ❌ Файл не скачался"
             ((FAILED_FILES++)) || true
@@ -251,7 +261,91 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
             continue
         fi
         
-        # 🔧 ИСПРАВЛЕНО: мин. размер для MRS: 1 байт
+        if ! check_file_size "$OUTPUT_DIR/${NAME}.mrs" 1; then
+            echo "  ❌ Файл пустой"
+            if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
+                cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
+            fi
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        
+        echo "  ✅ $OUTPUT_DIR/${NAME}.mrs ($(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1))"
+    done
+fi
+
+# ============================================
+# GeoSite YAML — КОНВЕРТАЦИЯ
+# ============================================
+if [[ ${#GEOSITE_YAML[@]} -gt 0 ]]; then
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "🌐 GeoSite YAML → MRS"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+    for NAME in "${!GEOSITE_YAML[@]}"; do
+        SOURCE_URL="${GEOSITE_YAML[$NAME]}"
+        echo ""
+        echo "🔄 $NAME"
+        
+        ((TOTAL_FILES++)) || true
+        
+        echo "  🔍 Проверка источника..."
+        if ! check_http_response "$SOURCE_URL"; then
+            echo "  ❌ HTTP ошибка"
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        echo "  ✅ HTTP OK"
+        
+        if check_cache "$NAME" "$SOURCE_URL"; then
+            echo "  ✅ Без изменений (кэш)"
+            ((CACHED_FILES++)) || true
+            continue
+        fi
+        
+        echo "  📥 Скачиваем..."
+        curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.yaml"
+        
+        if ! check_file_size "$TEMP_DIR/${NAME}.yaml" 10; then
+            echo "  ❌ Файл не скачался или слишком мал"
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        
+        echo "  🔍 Проверка на HTML..."
+        if ! check_not_html "$TEMP_DIR/${NAME}.yaml"; then
+            echo "  ❌ Файл содержит HTML"
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        
+        if ! grep -q "^payload:" "$TEMP_DIR/${NAME}.yaml"; then
+            echo "  ❌ Отсутствует секция 'payload:' в YAML"
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        echo "  ✅ Структура YAML валидна"
+        
+        if [[ -f "$OUTPUT_DIR/${NAME}.mrs" ]]; then
+            cp "$OUTPUT_DIR/${NAME}.mrs" "$TEMP_DIR/${NAME}.mrs.backup"
+            echo "  💾 Бэкап сохранен"
+        fi
+        
+        DOMAIN_COUNT=$(grep -c "^  - " "$TEMP_DIR/${NAME}.yaml" 2>/dev/null || echo "0")
+        echo "  📊 Элементов в payload: ~$DOMAIN_COUNT"
+        echo "  🔧 Конвертируем в MRS..."
+        
+        if ! "$TEMP_DIR/mihomo" convert-ruleset domain yaml "$TEMP_DIR/${NAME}.yaml" "$OUTPUT_DIR/${NAME}.mrs" 2>&1; then
+            echo "  ❌ Ошибка конвертации!"
+            if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
+                echo "  💾 Восстанавливаем предыдущую версию..."
+                cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
+            fi
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        
         if ! check_file_size "$OUTPUT_DIR/${NAME}.mrs" 1; then
             echo "  ❌ Файл пустой"
             if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
@@ -297,7 +391,6 @@ if [[ ${#GEOSITE_MRS[@]} -gt 0 ]]; then
         fi
         
         if curl -fL "${GEOSITE_MRS[$NAME]}" -o "$OUTPUT_DIR/${NAME}.mrs" 2>/dev/null; then
-            # 🔧 ИСПРАВЛЕНО: мин. размер для MRS: 1 байт
             if check_file_size "$OUTPUT_DIR/${NAME}.mrs" 1; then
                 echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
             else
@@ -348,7 +441,6 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
         echo "  📥 Скачиваем..."
         curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
         
-        # Мин. размер для TXT: 1 байт
         if ! check_file_size "$TEMP_DIR/${NAME}.txt" 1; then
             echo "  ❌ Файл не скачался"
             ((FAILED_FILES++)) || true
@@ -409,7 +501,86 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
             continue
         fi
         
-        # 🔧 ИСПРАВЛЕНО: мин. размер для MRS: 1 байт
+        if ! check_file_size "$OUTPUT_DIR/${NAME}.mrs" 1; then
+            echo "  ❌ Файл пустой"
+            if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
+                cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
+            fi
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        
+        echo "  ✅ $OUTPUT_DIR/${NAME}.mrs ($(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1))"
+    done
+fi
+
+# ============================================
+# GeoIP YAML — КОНВЕРТАЦИЯ
+# ============================================
+if [[ ${#GEOIP_YAML[@]} -gt 0 ]]; then
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "🌍 GeoIP YAML → MRS"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+    for NAME in "${!GEOIP_YAML[@]}"; do
+        SOURCE_URL="${GEOIP_YAML[$NAME]}"
+        echo ""
+        echo "🔄 $NAME"
+        
+        ((TOTAL_FILES++)) || true
+        
+        if ! check_http_response "$SOURCE_URL"; then
+            echo "  ❌ HTTP ошибка"
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        
+        if check_cache "$NAME" "$SOURCE_URL"; then
+            echo "  ✅ Без изменений (кэш)"
+            ((CACHED_FILES++)) || true
+            continue
+        fi
+        
+        echo "  📥 Скачиваем..."
+        curl -sL "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.yaml"
+        
+        if ! check_file_size "$TEMP_DIR/${NAME}.yaml" 10; then
+            echo "  ❌ Файл не скачался или слишком мал"
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        
+        if ! check_not_html "$TEMP_DIR/${NAME}.yaml"; then
+            echo "  ❌ Файл содержит HTML"
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        
+        if ! grep -q "^payload:" "$TEMP_DIR/${NAME}.yaml"; then
+            echo "  ❌ Отсутствует секция 'payload:' в YAML"
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        echo "  ✅ Структура YAML валидна"
+        
+        if [[ -f "$OUTPUT_DIR/${NAME}.mrs" ]]; then
+            cp "$OUTPUT_DIR/${NAME}.mrs" "$TEMP_DIR/${NAME}.mrs.backup"
+        fi
+        
+        IP_COUNT=$(grep -c "^  - " "$TEMP_DIR/${NAME}.yaml" 2>/dev/null || echo "0")
+        echo "  📊 Элементов в payload: ~$IP_COUNT"
+        echo "  🔧 Конвертируем в MRS..."
+        
+        if ! "$TEMP_DIR/mihomo" convert-ruleset ipcidr yaml "$TEMP_DIR/${NAME}.yaml" "$OUTPUT_DIR/${NAME}.mrs" 2>&1; then
+            echo "  ❌ Ошибка конвертации!"
+            if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
+                cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
+            fi
+            ((FAILED_FILES++)) || true
+            continue
+        fi
+        
         if ! check_file_size "$OUTPUT_DIR/${NAME}.mrs" 1; then
             echo "  ❌ Файл пустой"
             if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
@@ -455,7 +626,6 @@ if [[ ${#GEOIP_MRS[@]} -gt 0 ]]; then
         fi
         
         if curl -fL "${GEOIP_MRS[$NAME]}" -o "$OUTPUT_DIR/${NAME}.mrs" 2>/dev/null; then
-            # 🔧 ИСПРАВЛЕНО: мин. размер для MRS: 1 байт
             if check_file_size "$OUTPUT_DIR/${NAME}.mrs" 1; then
                 echo "  ✅ $(du -h "$OUTPUT_DIR/${NAME}.mrs" | cut -f1)"
             else
