@@ -5,7 +5,7 @@ set -e
 # НАСТРОЙКИ
 # ============================================
 OUTPUT_DIR="output"
-OUTPUT_NAME="category-ru-all"
+OUTPUT_NAME="ru-all"
 
 # Исходные данные
 REPO_OWNER="MetaCubeX"
@@ -143,7 +143,7 @@ $(for c in "${CATEGORY_FILES[@]}"; do echo "- $c"; done)
 ## Usage (Mihomo)
 \`\`\`yaml
 rule-providers:
-  category-ru-all:
+  ru-all:
     type: http
     behavior: domain
     format: mrs
