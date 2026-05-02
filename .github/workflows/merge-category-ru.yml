@@ -34,6 +34,6 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "${{ steps.commit_msg.outputs.msg }}"
-          file_pattern: 'output/category-ru-all.*'
+          file_pattern: 'output/ru-all.*'
           commit_user_name: 'github-actions[bot]'
           commit_user_email: 'github-actions[bot]@users.noreply.github.com'
