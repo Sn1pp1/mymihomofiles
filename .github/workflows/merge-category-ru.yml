@@ -1,0 +1,32 @@
+name: Merge Category RU Rules
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run merge script
+        run: |
+          chmod +x scripts/merge-category-ru.sh
+          ./scripts/merge-category-ru.sh
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update rules [Build #${{ github.run_number }}] - $(date '+%Y-%m-%d %H:%M') MSK"
+          file_pattern: 'output/category-ru-all.*'
+          commit_user_name: 'github-actions[bot]'
+          commit_user_email: 'github-actions[bot]@users.noreply.github.com'
