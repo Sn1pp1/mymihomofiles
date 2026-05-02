@@ -82,7 +82,6 @@ declare -A GEOSITE_TXT=(
 
 declare -A GEOSITE_MRS=(
     ["category-ads"]="https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/mihomo/category-ads.mrs"
-    ["category-ads-all"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ads-all.mrs"
     ["private"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"
     ["category-ru"]="https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/rules/category-ru.mrs"
     ["telegram"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/telegram.mrs"
