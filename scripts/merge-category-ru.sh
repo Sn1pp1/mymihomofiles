@@ -102,7 +102,7 @@ echo "📝 Генерация YAML..."
 YAML_PATH="${OUTPUT_DIR}/${OUTPUT_NAME}.yaml"
 echo "payload:" > "$YAML_PATH"
 while IFS= read -r domain; do
-    echo "  - '${domain}'" >> "$YAML_PATH"
+    echo "  - ${domain}" >> "$YAML_PATH"
 done < "$TEMP_CLEAN"
 
 # Б. Конвертируем в MRS (бинарный формат для mihomo)
