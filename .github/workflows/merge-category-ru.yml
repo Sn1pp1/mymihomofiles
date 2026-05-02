@@ -2,6 +2,8 @@ name: Merge Category RU Rules
 
 on:
   schedule:
+    # Запуск каждые 6 часов (UTC)
+    # 00:00, 06:00, 12:00, 18:00
     - cron: '0 */6 * * *'
   workflow_dispatch:
 
@@ -23,10 +25,15 @@ jobs:
           chmod +x scripts/merge-category-ru.sh
           ./scripts/merge-category-ru.sh
 
+      - name: Generate commit message
+        id: commit_msg
+        run: |
+          echo "msg=Update rules [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')" >> $GITHUB_OUTPUT
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Update rules [Build #${{ github.run_number }}] - $(date '+%Y-%m-%d %H:%M') MSK"
+          commit_message: "${{ steps.commit_msg.outputs.msg }}"
           file_pattern: 'output/category-ru-all.*'
           commit_user_name: 'github-actions[bot]'
           commit_user_email: 'github-actions[bot]@users.noreply.github.com'
