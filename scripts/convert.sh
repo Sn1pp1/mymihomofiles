@@ -91,12 +91,10 @@ declare -A GEOSITE_MRS=(
     ["google-deepmind"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-deepmind.mrs"
     ["google-play"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-play.mrs"
     ["cloudflare"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cloudflare.mrs"
-    ["torrent-trackers"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/other/torrent-trackers.mrs"
 )
 
 declare -A GEOSITE_YAML=(
-    ["ru-app-list"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/other/ru-app-list.yaml"
-    ["torrent-clients"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/other/torrent-clients.yaml"
+
 )
 
 declare -A GEOIP_TXT=(
