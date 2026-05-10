@@ -21,7 +21,7 @@ tcp-concurrent: true
 enable-process: true
 find-process-mode: strict
 mode: rule
-log-level: info
+log-level: silent
 ipv6: false
 keep-alive-interval: 30
 unified-delay: true
@@ -67,6 +67,9 @@ sniffer:
       ports:
         - 443
         - 8443
+    QUIC:
+      ports:
+        - 443
 
 tun:
   enable: true
@@ -138,6 +141,7 @@ dns:
   proxy-server-nameserver:
     - https://1.1.1.1/dns-query
     - https://8.8.8.8/dns-query
+    - https://77.88.8.8/dns-query
 
   direct-nameserver:
     - https://77.88.8.8/dns-query
@@ -153,8 +157,11 @@ dns:
       - system
       - https://77.88.8.8/dns-query
 
+    rule-set:category-ads:
+      - rcode://refused
+
 proxies:
-  - name: "🇷🇺 БезVPN"
+  - name: "♻️ БезVPN"
     type: direct
     udp: true
 
@@ -163,7 +170,7 @@ proxy-groups:
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Lock.png  
     type: select
     proxies:
-      - 🎲 Auto
+      - ⚡️ Fastest
 
   - name: ▶️ YouTube
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
@@ -177,18 +184,18 @@ proxy-groups:
       include-proxies: false
     type: select
     proxies:
-      - 🇷🇺 БезVPN
+      - ♻️ БезVPN
       - 🔒 VPN
 
-  - name: 🎲 Auto
-    type: fallback
-    remnawave:
-      include-proxies: true
-      shuffle-proxies-order: true
-    url: "https://www.gstatic.com/generate_204"
+  - name: ⚡️ Fastest
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
+    type: url-test
+    lazy: true
+    tolerance: 35
+    url: https://captive.apple.com/generate_204
     interval: 300
     hidden: true
-    lazy: true
+    proxies:
 
 rule-providers:
   category-ads:
@@ -223,70 +230,6 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/youtube.mrs
     path: ./rule-sets/youtube.mrs
     proxy: 🔒 VPN
-  telegram:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/telegram.mrs
-    path: ./rule-sets/telegram.mrs
-    proxy: 🔒 VPN
-  telegram-ip:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/telegram-ip.mrs
-    path: ./rule-sets/telegram-ip.mrs
-    proxy: 🔒 VPN
-  meta:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/meta.mrs
-    path: ./rule-sets/meta.mrs
-    proxy: 🔒 VPN
-  meta-ip:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/meta-ip.mrs
-    path: ./rule-sets/meta-ip.mrs
-    proxy: 🔒 VPN
-  discord:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/discord.mrs
-    path: ./rule-sets/discord.mrs
-    proxy: 🔒 VPN
-  discord-ip:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/discord-ip.mrs
-    path: ./rule-sets/discord-ip.mrs
-    proxy: 🔒 VPN
-  google-deepmind:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/google-deepmind.mrs
-    path: ./rule-sets/google-deepmind.mrs
-    proxy: 🔒 VPN
-  google-play:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/google-play.mrs
-    path: ./rule-sets/google-play.mrs
-    proxy: 🔒 VPN
   ru-blocked:
     type: http
     behavior: domain
@@ -319,47 +262,14 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/domain-list.mrs
     path: ./rule-sets/domain-list.mrs
     proxy: 🔒 VPN
-  category-ru:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/category-ru.mrs
-    path: ./rule-sets/category-ru.mrs
-    proxy: 🔒 VPN
-  category-ru-ip:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/category-ru-ip.mrs
-    path: ./rule-sets/category-ru-ip.mrs
-    proxy: 🔒 VPN
-  quic:
-    type: inline
-    behavior: classical
-    payload:
-      - AND,((NETWORK,udp),(DST-PORT,443))
 
 rules:
-  - RULE-SET,quic,REJECT-DROP
   - RULE-SET,category-ads,REJECT
   - RULE-SET,private,DIRECT
   - RULE-SET,private-ip,DIRECT,no-resolve
   - RULE-SET,youtube,▶️ YouTube
-  - RULE-SET,telegram,🔒 VPN
-  - RULE-SET,telegram-ip,🔒 VPN
-  - RULE-SET,meta,🔒 VPN
-  - RULE-SET,meta-ip,🔒 VPN
-  - RULE-SET,discord,🔒 VPN
-  - RULE-SET,discord-ip,🔒 VPN
-  - PROCESS-NAME,Discord.exe,🔒 VPN
-  - RULE-SET,google-deepmind,🔒 VPN
-  - RULE-SET,google-play,🔒 VPN
   - RULE-SET,ru-blocked,🔒 VPN
   - RULE-SET,ru-blocked-ip,🔒 VPN
   - RULE-SET,ru-blocked-community-ip,🔒 VPN
   - RULE-SET,domain-list,🔒 VPN
-  - RULE-SET,category-ru,🇷🇺 БезVPN
-  - RULE-SET,category-ru-ip,🇷🇺 БезVPN
   - MATCH,🌍 Остальные сайты
