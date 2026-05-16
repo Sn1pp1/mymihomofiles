@@ -91,6 +91,7 @@ declare -A GEOSITE_YAML=(
 )
 
 declare -A GEOIP_TXT=(
+    ["community-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/community.lst"
 )
 
 declare -A GEOIP_MRS=(
