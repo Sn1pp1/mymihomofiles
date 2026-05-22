@@ -89,7 +89,7 @@ declare -A GEOSITE_YAML=(
 )
 
 declare -A GEOIP_TXT=(
-    ["community-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/community.lst"
+    ["community-ip"]="https://community.antifilter.download/list/community.lst"
 )
 
 declare -A GEOIP_MRS=(
