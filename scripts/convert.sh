@@ -77,29 +77,22 @@ check_cache() {
 
 declare -A GEOSITE_TXT=(
     ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
-    ["ru-blocked"]="https://github.com/runetfreedom/russia-blocked-geosite/raw/refs/heads/release/ru-blocked.txt"
-    ["domain-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
 )
 
 declare -A GEOSITE_MRS=(
-    ["category-ads"]="https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/mihomo/category-ads.mrs"
     ["private"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"
     ["youtube"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.mrs"
-    ["kinopub"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/kinopub.mrs"
 )
 
 declare -A GEOSITE_YAML=(
 )
 
 declare -A GEOIP_TXT=(
-    ["community-ip"]="https://community.antifilter.download/list/community.lst"
     ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
 )
 
 declare -A GEOIP_MRS=(
     ["private-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"
-    ["ru-blocked-ip"]="https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/mrs/ru-blocked.mrs"
-    ["ru-blocked-community-ip"]="https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/mrs/ru-blocked-community.mrs"
 )
 
 declare -A GEOIP_YAML=(
