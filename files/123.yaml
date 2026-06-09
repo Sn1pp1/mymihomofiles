@@ -21,7 +21,7 @@ tcp-concurrent: true
 enable-process: true
 find-process-mode: strict
 mode: rule
-log-level: silent
+log-level: info
 ipv6: false
 keep-alive-interval: 30
 unified-delay: true
@@ -134,28 +134,31 @@ dns:
     - "*.icloud.com"
 
   default-nameserver:
+    - https://77.88.8.8/dns-query
     - https://1.1.1.1/dns-query
     - https://8.8.8.8/dns-query
-    - https://77.88.8.8/dns-query
+    - https://9.9.9.9/dns-query
 
   proxy-server-nameserver:
     - https://1.1.1.1/dns-query
     - https://8.8.8.8/dns-query
-    - https://77.88.8.8/dns-query
+    - https://9.9.9.9/dns-query
 
   direct-nameserver:
-    - https://77.88.8.8/dns-query
-    - https://1.1.1.1/dns-query
-    - https://8.8.8.8/dns-query
+    - https://77.88.8.8/dns-query#♻️ БезVPN
+    - https://1.1.1.1/dns-query#♻️ БезVPN
+    - https://8.8.8.8/dns-query#♻️ БезVPN
+    - https://9.9.9.9/dns-query#♻️ БезVPN
+
   
   nameserver:
     - https://1.1.1.1/dns-query#🔒 VPN
     - https://8.8.8.8/dns-query#🔒 VPN
+    - https://9.9.9.9/dns-query#🔒 VPN
 
   nameserver-policy:
     rule-set:private:
       - system
-      - https://77.88.8.8/dns-query
 
     rule-set:category-ads:
       - rcode://refused
@@ -191,21 +194,13 @@ proxy-groups:
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
     type: url-test
     lazy: true
-    tolerance: 35
-    url: https://captive.apple.com/generate_204
+    tolerance: 30
+    url: "https://www.gstatic.com/generate_204"
     interval: 300
     hidden: true
     proxies:
 
 rule-providers:
-  category-ads:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/category-ads.mrs
-    path: ./rule-sets/category-ads.mrs
-    proxy: 🔒 VPN
   private:
     type: http
     behavior: domain
@@ -230,46 +225,27 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/youtube.mrs
     path: ./rule-sets/youtube.mrs
     proxy: 🔒 VPN
-  ru-blocked:
+  ru-blocklist:
     type: http
     behavior: domain
     format: mrs
     interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocked.mrs
-    path: ./rule-sets/ru-blocked.mrs
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocklist.mrs
+    path: ./rule-sets/ru-blocklist.mrs
     proxy: 🔒 VPN
-  ru-blocked-ip:
+  community-ip:
     type: http
     behavior: ipcidr
     format: mrs
     interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocked-ip.mrs
-    path: ./rule-sets/ru-blocked-ip.mrs
-    proxy: 🔒 VPN
-  ru-blocked-community-ip:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocked-community-ip.mrs
-    path: ./rule-sets/ru-blocked-community-ip.mrs
-    proxy: 🔒 VPN
-  domain-list:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/domain-list.mrs
-    path: ./rule-sets/domain-list.mrs
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocklist-ip.mrs
+    path: ./rule-sets/ru-blocklist-ip.mrs
     proxy: 🔒 VPN
 
 rules:
-  - RULE-SET,category-ads,REJECT
   - RULE-SET,private,DIRECT
   - RULE-SET,private-ip,DIRECT,no-resolve
   - RULE-SET,youtube,▶️ YouTube
-  - RULE-SET,ru-blocked,🔒 VPN
-  - RULE-SET,ru-blocked-ip,🔒 VPN
-  - RULE-SET,ru-blocked-community-ip,🔒 VPN
-  - RULE-SET,domain-list,🔒 VPN
+  - RULE-SET,ru-blocklist,🔒 VPN
+  - RULE-SET,ru-blocklist-ip,🔒 VPN
   - MATCH,🌍 Остальные сайты
