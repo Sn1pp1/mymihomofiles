@@ -160,9 +160,6 @@ dns:
     rule-set:private:
       - system
 
-    rule-set:category-ads:
-      - rcode://refused
-
 proxies:
   - name: "♻️ БезVPN"
     type: direct
