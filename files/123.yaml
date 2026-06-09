@@ -233,7 +233,7 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocklist.mrs
     path: ./rule-sets/ru-blocklist.mrs
     proxy: 🔒 VPN
-  community-ip:
+  ru-blocklist-ip:
     type: http
     behavior: ipcidr
     format: mrs
