@@ -89,6 +89,7 @@ declare -A GEOSITE_YAML=(
 
 declare -A GEOIP_TXT=(
     ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
+    ["allyouneed-ip"]="https://antifilter.download/list/allyouneed.lst"
 )
 
 declare -A GEOIP_MRS=(
