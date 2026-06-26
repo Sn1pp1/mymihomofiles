@@ -19,7 +19,7 @@ lan-allowed-ips:
 
 tcp-concurrent: true
 enable-process: true
-find-process-mode: strict
+find-process-mode: always
 mode: rule
 log-level: info
 ipv6: false
@@ -134,27 +134,26 @@ dns:
     - "*.icloud.com"
 
   default-nameserver:
-    - https://77.88.8.8/dns-query
-    - https://1.1.1.1/dns-query
-    - https://8.8.8.8/dns-query
     - https://9.9.9.9/dns-query
+    - https://8.8.8.8/dns-query
+    - https://1.1.1.1/dns-query
+    - https://77.88.8.8/dns-query
 
   proxy-server-nameserver:
-    - https://1.1.1.1/dns-query
-    - https://8.8.8.8/dns-query
     - https://9.9.9.9/dns-query
+    - https://8.8.8.8/dns-query
+    - https://1.1.1.1/dns-query
 
   direct-nameserver:
     - https://77.88.8.8/dns-query#♻️ БезVPN
-    - https://1.1.1.1/dns-query#♻️ БезVPN
-    - https://8.8.8.8/dns-query#♻️ БезVPN
     - https://9.9.9.9/dns-query#♻️ БезVPN
+    - https://8.8.8.8/dns-query#♻️ БезVPN
+    - https://1.1.1.1/dns-query#♻️ БезVPN
 
-  
   nameserver:
-    - https://1.1.1.1/dns-query#🔒 VPN
-    - https://8.8.8.8/dns-query#🔒 VPN
     - https://9.9.9.9/dns-query#🔒 VPN
+    - https://8.8.8.8/dns-query#🔒 VPN
+    - https://1.1.1.1/dns-query#🔒 VPN
 
   nameserver-policy:
     rule-set:private:
@@ -192,7 +191,7 @@ proxy-groups:
     type: url-test
     lazy: true
     tolerance: 30
-    url: "https://www.gstatic.com/generate_204"
+    url: https://www.gstatic.com/generate_204
     interval: 300
     hidden: true
     proxies:
@@ -238,8 +237,15 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocklist-ip.mrs
     path: ./rule-sets/ru-blocklist-ip.mrs
     proxy: 🔒 VPN
+  ad-block:
+    type: inline
+    behavior: classical
+    payload:
+      - DOMAIN-SUFFIX,ad.mail.ru
+      - DOMAIN-SUFFIX,alt-ad.mail.ru
 
 rules:
+  - RULE-SET,ad-block,REJECT
   - RULE-SET,private,DIRECT
   - RULE-SET,private-ip,DIRECT,no-resolve
   - RULE-SET,youtube,▶️ YouTube
