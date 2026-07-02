@@ -77,6 +77,12 @@ check_cache() {
 
 declare -A GEOSITE_TXT=(
     ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
+    ["category-ads-all"]="https://github.com/runetfreedom/russia-blocked-geosite/raw/refs/heads/release/category-ads-all.txt"
+    ["oisd-small"]="https://small.oisd.nl/domainswild2"
+    ["ru-blocked"]="https://github.com/runetfreedom/russia-blocked-geosite/raw/refs/heads/release/ru-blocked.txt"
+    ["domain-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
+    
+    
 )
 
 declare -A GEOSITE_MRS=(
@@ -93,6 +99,8 @@ declare -A GEOIP_TXT=(
 
 declare -A GEOIP_MRS=(
     ["private-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"
+    ["ru-blocked-ip"]="https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/mrs/ru-blocked.mrs"
+    ["ru-blocked-community-ip"]="https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/mrs/ru-blocked-community.mrs"
 )
 
 declare -A GEOIP_YAML=(
