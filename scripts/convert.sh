@@ -76,6 +76,7 @@ check_cache() {
 # ============================================
 
 declare -A GEOSITE_TXT=(
+    ["category-ads"]="https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-ads"
     ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
 )
 
