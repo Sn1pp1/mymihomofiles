@@ -469,10 +469,8 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
                 grep -v '^[[:space:]]*$' | \
                 parse_ipcidr_fast | \
                 grep -v '^$' | \
-                # Только строки с / (CIDR формат)
-                grep -E '/[0-9]+$' | \
-                # Отсеиваем домены (не должны быть в geoip)
-                grep -vE '[a-zA-Z]' | \
+                # Оставляем только валидные IPv4 и IPv6 CIDR (отсеиваем домены и мусор)
+                grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}/[0-9]{1,2}$|^[0-9a-fA-F:]+/[0-9]{1,3}$' | \
                 while IFS= read -r ip; do
                     if [[ -n "$ip" ]]; then
                         echo "  - '$ip'"
@@ -528,6 +526,7 @@ if [[ ${#GEOIP_YAML[@]} -gt 0 ]]; then
         
         TOTAL_FILES=$((TOTAL_FILES + 1))
         
+        echo "  🔍 Проверка источника..."
         if ! check_http_response "$SOURCE_URL"; then
             echo "  ❌ HTTP ошибка"
             FAILED_FILES=$((FAILED_FILES + 1))
