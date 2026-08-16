@@ -3,12 +3,9 @@ set -euo pipefail
 
 OUTPUT_DIR="output"
 TEMP_DIR=$(mktemp -d)
-CACHE_DIR="$OUTPUT_DIR/.cache"
 
 # Очистка TEMP_DIR при любом выходе (успех/ошибка)
 trap "rm -rf $TEMP_DIR" EXIT
-
-mkdir -p "$CACHE_DIR"
 
 # ============================================
 # ФУНКЦИИ ДЛЯ ОЧИСТКИ И ВАЛИДАЦИИ
@@ -79,30 +76,6 @@ check_file_size() {
     [[ "$size" -ge "$min_size" ]]
 }
 
-check_cache() {
-    local name="$1"
-    local url="$2"
-    local cache_file="$CACHE_DIR/${name}.hash"
-    
-    local current_hash
-    current_hash=$(curl -sIL --retry 2 --retry-delay 1 "$url" 2>/dev/null | grep -iE '^(etag|last-modified):' | tr -d '\r' | md5sum | cut -d' ' -f1)
-    
-    if [[ -z "$current_hash" ]]; then
-        current_hash=$(md5sum <<< "$url" | cut -d' ' -f1)
-    fi
-    
-    if [[ -f "$cache_file" ]]; then
-        local cached_hash
-        cached_hash=$(cat "$cache_file")
-        if [[ "$current_hash" == "$cached_hash" ]] && [[ -f "$OUTPUT_DIR/${name}.mrs" ]]; then
-            return 0
-        fi
-    fi
-    
-    echo "$current_hash" > "$cache_file"
-    return 1
-}
-
 # ============================================
 # МАССИВЫ
 # ============================================
@@ -158,7 +131,6 @@ echo "✅ Mihomo готов"
 mkdir -p "$OUTPUT_DIR"
 
 TOTAL_FILES=0
-CACHED_FILES=0
 FAILED_FILES=0
 
 # ============================================
@@ -184,12 +156,6 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
             continue
         fi
         echo "  ✅ HTTP OK"
-        
-        if check_cache "$NAME" "$SOURCE_URL"; then
-            echo "  ✅ Без изменений (кэш)"
-            CACHED_FILES=$((CACHED_FILES + 1))
-            continue
-        fi
         
         echo "  📥 Скачиваем..."
         curl -sL --retry 3 --retry-delay 2 "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
@@ -297,12 +263,6 @@ if [[ ${#GEOSITE_YAML[@]} -gt 0 ]]; then
         fi
         echo "  ✅ HTTP OK"
         
-        if check_cache "$NAME" "$SOURCE_URL"; then
-            echo "  ✅ Без изменений (кэш)"
-            CACHED_FILES=$((CACHED_FILES + 1))
-            continue
-        fi
-        
         echo "  📥 Скачиваем..."
         curl -sL --retry 3 --retry-delay 2 "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.yaml"
         
@@ -379,12 +339,6 @@ if [[ ${#GEOSITE_MRS[@]} -gt 0 ]]; then
             continue
         fi
         
-        if check_cache "$NAME" "${GEOSITE_MRS[$NAME]}"; then
-            echo "  ✅ Без изменений (кэш)"
-            CACHED_FILES=$((CACHED_FILES + 1))
-            continue
-        fi
-        
         if [[ -f "$OUTPUT_DIR/${NAME}.mrs" ]]; then
             cp "$OUTPUT_DIR/${NAME}.mrs" "$TEMP_DIR/${NAME}.mrs.backup"
         fi
@@ -425,15 +379,10 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
         
         TOTAL_FILES=$((TOTAL_FILES + 1))
         
+        echo "  🔍 Проверка источника..."
         if ! check_http_response "$SOURCE_URL"; then
             echo "  ❌ HTTP ошибка"
             FAILED_FILES=$((FAILED_FILES + 1))
-            continue
-        fi
-        
-        if check_cache "$NAME" "$SOURCE_URL"; then
-            echo "  ✅ Без изменений (кэш)"
-            CACHED_FILES=$((CACHED_FILES + 1))
             continue
         fi
         
@@ -533,12 +482,6 @@ if [[ ${#GEOIP_YAML[@]} -gt 0 ]]; then
             continue
         fi
         
-        if check_cache "$NAME" "$SOURCE_URL"; then
-            echo "  ✅ Без изменений (кэш)"
-            CACHED_FILES=$((CACHED_FILES + 1))
-            continue
-        fi
-        
         echo "  📥 Скачиваем..."
         curl -sL --retry 3 --retry-delay 2 "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.yaml"
         
@@ -612,12 +555,6 @@ if [[ ${#GEOIP_MRS[@]} -gt 0 ]]; then
             continue
         fi
         
-        if check_cache "$NAME" "${GEOIP_MRS[$NAME]}"; then
-            echo "  ✅ Без изменений (кэш)"
-            CACHED_FILES=$((CACHED_FILES + 1))
-            continue
-        fi
-        
         if [[ -f "$OUTPUT_DIR/${NAME}.mrs" ]]; then
             cp "$OUTPUT_DIR/${NAME}.mrs" "$TEMP_DIR/${NAME}.mrs.backup"
         fi
@@ -654,9 +591,8 @@ echo "🕐 $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M:%S %Z')"
 echo ""
 echo "📊 Статистика:"
 echo "   Всего файлов: $TOTAL_FILES"
-echo "   В кэше (без изменений): $CACHED_FILES"
 echo "   Ошибок: $FAILED_FILES"
-echo "   Успешно: $((TOTAL_FILES - FAILED_FILES - CACHED_FILES))"
+echo "   Успешно: $((TOTAL_FILES - FAILED_FILES))"
 echo ""
 echo "📁 Файлы:"
 ls -lh "$OUTPUT_DIR"/*.mrs 2>/dev/null | awk '{print "   • " $9 " (" $5 ")"}' || echo "  (нет файлов)"
