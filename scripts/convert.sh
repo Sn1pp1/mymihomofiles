@@ -83,6 +83,7 @@ check_file_size() {
 declare -A GEOSITE_TXT=(
     ["category-ads"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/category-ads.txt"
     ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
+    ["wl"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/wl.txt"
 )
 
 declare -A GEOSITE_MRS=(
@@ -95,6 +96,7 @@ declare -A GEOSITE_YAML=(
 
 declare -A GEOIP_TXT=(
     ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
+    ["wl-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/wl-ip.txt"
 )
 
 declare -A GEOIP_MRS=(
