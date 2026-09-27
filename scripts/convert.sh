@@ -196,16 +196,15 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
                 grep -v '^[[:space:]]*$' | \
                 parse_domain_fast | \
                 grep -v '^$' | \
-                # Отсеиваем IP-адреса (не должны быть в geosite)
                 grep -vE '^([0-9]{1,3}\.){3}[0-9]{1,3}$' | \
-                # Отсеиваем IPv6
                 grep -vE '^[0-9a-fA-F:]+$' | \
-                # Отсеиваем строки с пробелами (мусор)
                 grep -v ' ' | \
-                # Отсеиваем пустые после обработки
-                grep -E '^[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+$' | \
+                # === ИСПРАВЛЕНИЕ ЗДЕСЬ ===
+                # Разрешаем обычные домены с точкой ИЛИ валидные TLD без точки (ru, su, by, moscow, xn--)
+                grep -E '^([a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+|ru|su|by|moscow|xn--[a-zA-Z0-9-]+)$' | \
                 while IFS= read -r domain; do
                     if [[ -n "$domain" ]]; then
+                        # Mihomo требует префикс +. для DOMAIN-SUFFIX
                         echo "  - '+.$domain'"
                     fi
                 done
@@ -423,7 +422,6 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
                 grep -v '^[[:space:]]*$' | \
                 parse_ipcidr_fast | \
                 grep -v '^$' | \
-                # Оставляем только валидные IPv4 и IPv6 CIDR (отсеиваем домены и мусор)
                 grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}/[0-9]{1,2}$|^[0-9a-fA-F:]+/[0-9]{1,3}$' | \
                 while IFS= read -r ip; do
                     if [[ -n "$ip" ]]; then
@@ -445,6 +443,7 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
         if ! "$TEMP_DIR/mihomo" convert-ruleset ipcidr yaml "$TEMP_DIR/${NAME}.yaml" "$OUTPUT_DIR/${NAME}.mrs" 2>&1; then
             echo "  ❌ Ошибка конвертации!"
             if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
+                echo "  💾 Восстанавливаем предыдущую версию..."
                 cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
             fi
             FAILED_FILES=$((FAILED_FILES + 1))
@@ -520,6 +519,7 @@ if [[ ${#GEOIP_YAML[@]} -gt 0 ]]; then
         if ! "$TEMP_DIR/mihomo" convert-ruleset ipcidr yaml "$TEMP_DIR/${NAME}.yaml" "$OUTPUT_DIR/${NAME}.mrs" 2>&1; then
             echo "  ❌ Ошибка конвертации!"
             if [[ -f "$TEMP_DIR/${NAME}.mrs.backup" ]]; then
+                echo "  💾 Восстанавливаем предыдущую версию..."
                 cp "$TEMP_DIR/${NAME}.mrs.backup" "$OUTPUT_DIR/${NAME}.mrs"
             fi
             FAILED_FILES=$((FAILED_FILES + 1))
