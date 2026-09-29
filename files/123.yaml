@@ -668,6 +668,7 @@ tun:
       "wildberries.business",
       "www.metro.com",
       "youdrive.today",
+      "com.kaspersky.passwordmanager",
     ]
 
 dns:
@@ -703,48 +704,45 @@ dns:
     - "time.google.com"
 
   default-nameserver:
-    - "77.88.8.8"
-    - "1.1.1.1"
-    - "8.8.8.8"
     - "9.9.9.10"
+    - "94.140.14.14"
+    - "77.88.8.8"
 
   proxy-server-nameserver:
-    - "https://77.88.8.8/dns-query#♻️ БезVPN"
-    - "https://1.1.1.1/dns-query#♻️ БезVPN"
-    - "https://8.8.8.8/dns-query#♻️ БезVPN"
     - "https://9.9.9.10/dns-query#♻️ БезVPN"
+    - "https://94.140.14.14/dns-query#♻️ БезVPN"
+    - "https://77.88.8.8/dns-query#♻️ БезVPN"
 
   direct-nameserver:
     - "https://77.88.8.8/dns-query#♻️ БезVPN"
-    - "https://1.1.1.1/dns-query#♻️ БезVPN"
-    - "https://8.8.8.8/dns-query#♻️ БезVPN"
     - "https://9.9.9.10/dns-query#♻️ БезVPN"
+    - "https://94.140.14.14/dns-query#♻️ БезVPN"
+    - "system"
 
   nameserver:
-    - "https://77.88.8.8/dns-query#🌍 Остальные сайты"
-    - "https://1.1.1.1/dns-query#🌍 Остальные сайты"
-    - "https://8.8.8.8/dns-query#🌍 Остальные сайты"
     - "https://9.9.9.10/dns-query#🌍 Остальные сайты"
+    - "https://94.140.14.14/dns-query#🌍 Остальные сайты"
+    - "https://77.88.8.8/dns-query#🌍 Остальные сайты"
 
   nameserver-policy:
     "rule-set:private":
       - system
-    
+
     "rule-set:wl":
       - "https://77.88.8.8/dns-query#🧻 Белые списки"
-    
+      - "system"
+
     "rule-set:ru-list":
       - "https://77.88.8.8/dns-query#⚪🔵🔴 RU сайты"
+      - "system"
 
     "rule-set:youtube":
-      - "https://1.1.1.1/dns-query#📺 YouTube"
-      - "https://8.8.8.8/dns-query#📺 YouTube"
       - "https://9.9.9.10/dns-query#📺 YouTube"
+      - "https://94.140.14.14/dns-query#📺 YouTube"
 
     "rule-set:ru-blocklist":
-      - "https://1.1.1.1/dns-query#🔒 VPN"
-      - "https://8.8.8.8/dns-query#🔒 VPN"
       - "https://9.9.9.10/dns-query#🔒 VPN"
+      - "https://94.140.14.14/dns-query#🔒 VPN"
 
 proxies:
   - name: "♻️ БезVPN"
