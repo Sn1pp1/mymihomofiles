@@ -13,8 +13,9 @@ trap 'rm -rf "$TEMP_DIR"' EXIT
 
 check_http_response() {
     local url="$1"
+    # Используем GET вместо HEAD (-I), так как GitHub raw-ссылки иногда некорректно отвечают на HEAD
     local response
-    response=$(curl -sIL --retry 2 --retry-delay 1 "$url" -w "%{http_code}" -o /dev/null 2>/dev/null)
+    response=$(curl -sL --max-time 5 -o /dev/null -w "%{http_code}" "$url" 2>/dev/null)
     [[ "$response" == "200" ]]
 }
 
@@ -71,7 +72,6 @@ declare -A GEOIP_YAML=()
 # ============================================
 
 echo "⚙️ Скачиваем mihomo..."
-# Используем jq для надежного парсинга JSON (если его нет, скрипт попытается установить или использует fallback)
 if ! command -v jq &> /dev/null; then
     echo "⚠️ jq не найден, устанавливаем..."
     sudo apt-get update && sudo apt-get install -y jq >/dev/null 2>&1 || true
@@ -81,7 +81,6 @@ LATEST_JSON=$(curl -sL --retry 3 --retry-delay 2 https://api.github.com/repos/Me
 MIHOMO_VERSION=$(echo "$LATEST_JSON" | jq -r '.tag_name')
 echo "📦 Версия: ${MIHOMO_VERSION}"
 
-# Надежный поиск URL бинарника
 MIHOMO_URL=$(echo "$LATEST_JSON" | jq -r '.assets[].browser_download_url' | grep -E 'mihomo-linux-amd64-compatible.*\.gz$' | head -1)
 [[ -z "$MIHOMO_URL" ]] && MIHOMO_URL=$(echo "$LATEST_JSON" | jq -r '.assets[].browser_download_url' | grep -E 'mihomo-linux-amd64-v.*\.gz$' | head -1)
 [[ -z "$MIHOMO_URL" ]] && MIHOMO_URL=$(echo "$LATEST_JSON" | jq -r '.assets[].browser_download_url' | grep -E 'mihomo-linux-amd64.*\.gz$' | grep -v '\.pkg\.tar' | head -1)
@@ -102,7 +101,7 @@ TOTAL_FILES=0
 FAILED_FILES=0
 
 # ============================================
-# GeoSite TXT — КОНВЕРТАЦИЯ (ОПТИМИЗИРОВАНО ЧЕРЕЗ AWK)
+# GeoSite TXT — КОНВЕРТАЦИЯ
 # ============================================
 if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
     echo ""
@@ -151,7 +150,6 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
             echo "  💾 Бэкап сохранен"
         fi
         
-        # === МОЩНЫЙ AWK ПАРСЕР (Заменяет grep | sed | while read) ===
         {
             echo "payload:"
             awk '
@@ -174,25 +172,29 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
                 sub(/,.*$/, "", $0)
                 sub(/[[:space:]]*#.*$/, "", $0)
                 gsub(/\.\./, ".")
-                sub(/\.+$/, "", $0)
+                
+                # КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: явное удаление конечной точки
+                sub(/\.$/, "", $0)
+                
                 gsub(/^[[:space:]]+|[[:space:]]+$/, "", $0)
 
                 # 4. Базовая валидация
                 if ($0 == "") next
-                if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next # Не IP
-                if ($0 ~ /:/) next # Не IPv6
-                if ($0 ~ / /) next # Без пробелов
+                if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
+                if ($0 ~ /:/) next
+                if ($0 ~ / /) next
+                if ($0 ~ /[^a-zA-Z0-9._-]/) next # Строгая проверка на недопустимые символы
 
                 # 5. ГАРАНТИЯ СОХРАНЕНИЯ TLD (Whitelist)
                 if ($0 !~ /\./) {
                     if ($0 != "ru" && $0 != "su" && $0 != "by" && $0 != "moscow" && $0 != "local" && $0 != "lan" && $0 != "localhost" && $0 != "internal" && $0 != "localdomain" && $0 != "example" && $0 != "invalid" && $0 != "test" && $0 !~ /^xn--/) {
-                        next # Отбрасываем мусор без точек
+                        next
                     }
                 }
 
                 # 6. Форматируем для Mihomo YAML
                 printf "  - \x27+.%s\x27\n", $0
-            }' "$TEMP_DIR/${NAME}.txt" | sort -u
+            }' "$TEMP_DIR/${NAME}.txt" | LC_ALL=C sort -u
         } > "$TEMP_DIR/${NAME}.yaml"
         
         DOMAIN_COUNT=$(grep -c "^  - " "$TEMP_DIR/${NAME}.yaml" 2>/dev/null || echo "0")
@@ -353,7 +355,7 @@ if [[ ${#GEOSITE_MRS[@]} -gt 0 ]]; then
 fi
 
 # ============================================
-# GeoIP TXT — КОНВЕРТАЦИЯ (ОПТИМИЗИРОВАНО ЧЕРЕЗ AWK)
+# GeoIP TXT — КОНВЕРТАЦИЯ
 # ============================================
 if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
     echo ""
@@ -408,8 +410,7 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
                 # 1. Удаляем префиксы
                 sub(/^(IPCIDR|IP-CIDR|SRC-IPCIDR|SRC-IP-CIDR|DST-IPCIDR|DST-IP-CIDR|IP|IP6|IP6-CIDR|GEOIP):/, "", $0)
                 
-                # 2. Чистим мусор
-                sub(/,.*$/, "", $0)
+                # 2. Чистим мусор и комментарии (КРИТИЧНО для custom.lst)
                 sub(/[[:space:]]*#.*$/, "", $0)
                 gsub(/^[[:space:]]+|[[:space:]]+$/, "", $0)
 
@@ -437,7 +438,7 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
                 if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) {
                     printf "  - \x27%s/32\x27\n", $0
                 }
-            }' "$TEMP_DIR/${NAME}.txt" | sort -u
+            }' "$TEMP_DIR/${NAME}.txt" | LC_ALL=C sort -u
         } > "$TEMP_DIR/${NAME}.yaml"
         
         IP_COUNT=$(grep -c "^  - " "$TEMP_DIR/${NAME}.yaml" 2>/dev/null || echo "0")
