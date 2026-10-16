@@ -185,7 +185,7 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
 
                 # 5. ГАРАНТИЯ СОХРАНЕНИЯ TLD (Whitelist)
                 if ($0 !~ /\./) {
-                    if ($0 != "ru" && $0 != "su" && $0 != "by" && $0 != "moscow" && $0 != "local" && $0 != "lan" && $0 != "internal" && $0 != "localdomain" && $0 != "example" && $0 != "invalid" && $0 != "test" && $0 !~ /^xn--/) {
+                    if ($0 != "ru" && $0 != "su" && $0 != "by" && $0 != "moscow" && $0 != "local" && $0 != "lan" && $0 != "localhost" && $0 != "internal" && $0 != "localdomain" && $0 != "example" && $0 != "invalid" && $0 != "test" && $0 !~ /^xn--/) {
                         next # Отбрасываем мусор без точек
                     }
                 }
