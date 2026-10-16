@@ -144,6 +144,8 @@ tun:
     [
       "air.ru.obi.mobile",
       "az.vtb.android",
+      "biz.dealnote.messenger",
+      "biz.dealnote.phoenix",
       "biz.growapp.winline",
       "business.gid.hero",
       "business.gid.universe",
@@ -218,6 +220,8 @@ tun:
       "com.octopod.russianpost.client.android",
       "com.onecwearable.keyboard.rustore",
       "com.orgp.spbpodorozhnik",
+      "com.perm.kate",
+      "com.perm.kate_new_6",
       "com.platfomni.gorzdrav",
       "com.pobeda.anniversary",
       "com.pogoda.infometeos",
@@ -252,6 +256,7 @@ tun:
       "com.vkontakte.android",
       "com.vkusvill.courier",
       "com.vkusvill.vacancy",
+      "com.vtosters.lite",
       "com.wbextdelivery",
       "com.wbpoint.android.prod.release",
       "com.wbstream_app",
@@ -276,6 +281,8 @@ tun:
       "com.yandex.tasks.androidapp",
       "com.yandex.yamb",
       "com.zvooq.openplay",
+      "dev.ragnarok.fenrir",
+      "dev.ragnarok.fenrir_kate",
       "es.hol.ing.zagsr",
       "games.my.cloud",
       "games.my.cloud.tv",
@@ -299,7 +306,9 @@ tun:
       "pro.arora.mobile.pizza_milana",
       "pro.rocketTech.rocket.rocketapp",
       "pro.sber_zvuk",
+      "re.sova.five",
       "ru.abrr.gas",
+      "ru.aeroflot",
       "ru.aisa.android.ekpv2",
       "ru.akbars.mobile",
       "ru.alfabank.mobile.android",
@@ -610,7 +619,7 @@ tun:
       "ru.wildberries.manager",
       "ru.wildberries.team",
       "ru.wildberries.team2",
-      "ru.wildberries.wbpayclient",
+      "ru.wildberries.wbpayc,lient",
       "ru.winelab",
       "ru.wink.music",
       "ru.wink.music.tv",
@@ -664,6 +673,7 @@ tun:
       "tv.lfstrm.smotreshka",
       "tv.ntvplus.app",
       "tv.ntvplus.app.tv",
+      "ua.itaysonlab.vkx",
       "wb.partners",
       "wildberries.business",
       "www.metro.com",
@@ -707,14 +717,18 @@ dns:
     - "9.9.9.10"
     - "94.140.14.14"
     - "77.88.8.8"
+    - "83.220.169.155"
+    - "212.109.195.93"
 
   proxy-server-nameserver:
     - "https://9.9.9.10/dns-query#♻️ БезVPN"
     - "https://94.140.14.14/dns-query#♻️ БезVPN"
     - "https://77.88.8.8/dns-query#♻️ БезVPN"
+    - "https://dns.comss.one/dns-query#♻️ БезVPN"
 
   direct-nameserver:
     - "https://77.88.8.8/dns-query#♻️ БезVPN"
+    - "https://dns.comss.one/dns-query#♻️ БезVPN"
     - "https://9.9.9.10/dns-query#♻️ БезVPN"
     - "https://94.140.14.14/dns-query#♻️ БезVPN"
     - "system"
@@ -723,26 +737,29 @@ dns:
     - "https://9.9.9.10/dns-query#🌍 Остальные сайты"
     - "https://94.140.14.14/dns-query#🌍 Остальные сайты"
     - "https://77.88.8.8/dns-query#🌍 Остальные сайты"
+    - "https://dns.comss.one/dns-query#🌍 Остальные сайты"
 
   nameserver-policy:
     "rule-set:private":
-      - system
-
-    "rule-set:wl":
-      - "https://77.88.8.8/dns-query#🧻 Белые списки"
       - "system"
+      - "77.88.8.8"
+      - "83.220.169.155"
+      - "77.88.8.1"
+      - "212.109.195.93"
 
     "rule-set:ru-list":
       - "https://77.88.8.8/dns-query#⚪🔵🔴 RU сайты"
+      - "https://dns.comss.one/dns-query#⚪🔵🔴 RU сайты"
       - "system"
 
     "rule-set:youtube":
       - "https://9.9.9.10/dns-query#📺 YouTube"
       - "https://94.140.14.14/dns-query#📺 YouTube"
-
+      - "https://dns.comss.one/dns-query#📺 YouTube"
     "rule-set:ru-blocklist":
       - "https://9.9.9.10/dns-query#🔒 VPN"
       - "https://94.140.14.14/dns-query#🔒 VPN"
+      - "https://dns.comss.one/dns-query#🔒 VPN"
 
 proxies:
   - name: "♻️ БезVPN"
@@ -782,6 +799,7 @@ proxy-groups:
 
   - name: 🎲 Автовыбор
     type: fallback
+    #exclude-filter: "США|Канада|Япония"
     remnawave:
       include-proxies: true
       shuffle-proxies-order: true
@@ -789,14 +807,6 @@ proxy-groups:
     interval: 300
     hidden: true
     lazy: true
-
-  - name: 🧻 Белые списки
-    type: select
-    hidden: true
-    remnawave:
-      include-proxies: false
-    proxies:
-      - ♻️ БезVPN
 
 rule-providers:
   category-ads:
@@ -823,37 +833,13 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/private-ip.mrs
     path: ./rule-sets/private-ip.mrs
     proxy: 🔒 VPN
-  wl:
+  games-list:
     type: http
     behavior: domain
     format: mrs
     interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/wl.mrs
-    path: ./rule-sets/wl.mrs
-    proxy: 🔒 VPN
-  wl-ip:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/wl-ip.mrs
-    path: ./rule-sets/wl-ip.mrs
-    proxy: 🔒 VPN
-  ru-list:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-list.mrs
-    path: ./rule-sets/ru-list.mrs
-    proxy: 🔒 VPN
-  ru-list-ip:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-list-ip.mrs
-    path: ./rule-sets/ru-list-ip.mrs
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/games-list.mrs
+    path: ./rule-sets/games-list.mrs
     proxy: 🔒 VPN
   youtube:
     type: http
@@ -879,19 +865,34 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-blocklist-ip.mrs
     path: ./rule-sets/ru-blocklist-ip.mrs
     proxy: 🔒 VPN
-  QUIC:
+  ru-list:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 43200
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-list.mrs
+    path: ./rule-sets/ru-list.mrs
+    proxy: 🔒 VPN
+  ru-list-ip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 43200
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-list-ip.mrs
+    path: ./rule-sets/ru-list-ip.mrs
+    proxy: 🔒 VPN
+  quic:
     type: inline
     behavior: classical
     payload:
       - AND,((NETWORK,udp),(DST-PORT,443))
 
 rules:
-  - RULE-SET,QUIC,REJECT
+  - RULE-SET,quic,REJECT
   - RULE-SET,category-ads,REJECT
   - RULE-SET,private,♻️ БезVPN
   - RULE-SET,private-ip,♻️ БезVPN,no-resolve
-  - RULE-SET,wl,🧻 Белые списки
-  - RULE-SET,wl-ip,🧻 Белые списки,no-resolve
+  - RULE-SET,games-list,♻️ БезVPN
   - RULE-SET,youtube,📺 YouTube
   - RULE-SET,ru-blocklist,🔒 VPN
   - RULE-SET,ru-blocklist-ip,🔒 VPN,no-resolve
