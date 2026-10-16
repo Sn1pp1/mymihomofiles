@@ -1,12 +1,9 @@
-name: Build gamesexe-list
+name: Build gamesexe-list.yaml
 
 on:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/gamesexe-list.yml']
-  workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -44,7 +41,6 @@ jobs:
 
         echo "🧹 Парсинг и очистка..."
 
-        # Парсим: убираем комментарии, пустые строки, приводим к нижнему регистру
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -66,7 +62,7 @@ jobs:
 
         echo "✅ Найдено $BEFORE уникальных процессов"
 
-        # Генерируем YAML файл для mihomo rule-set
+        # === ГЕНЕРАЦИЯ YAML ДЛЯ MIHOMO ===
         echo "payload:" > mymihomofiles/output/gamesexe-list.yaml
         awk '{printf "  - PROCESS-NAME,%s\n", $0}' "$TEMP_CLEAN" >> mymihomofiles/output/gamesexe-list.yaml
 
@@ -78,8 +74,8 @@ jobs:
       run: |
         cd mymihomofiles
         
-        git config user.name "gamesexe-list Bot"
-        git config user.email "gamesexe-list-bot@github.com"
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
         git fetch origin main
         git reset --soft origin/main
@@ -87,18 +83,19 @@ jobs:
         git add output/gamesexe-list.yaml
 
         if ! git diff --staged --quiet; then
-          git commit -m "🔄 Update gamesexe-list.yaml ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+          COMMIT_MSG="Update rules [Build #${{ github.run_number }}] - $(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK')"
+          git commit -m "$COMMIT_MSG"
           
           for i in 1 2 3; do
             if git push origin main; then
-              echo " Файл успешно обновлен в mymihomofiles"
+              echo "📤 Файл успешно обновлен в mymihomofiles"
               break
             else
-              echo "⚠️ Push не удался, обновляем ветку (попытка $i)..."
+              echo "️ Push не удался, обновляем ветку (попытка $i)..."
               git fetch origin main
               git reset --soft origin/main
               git add output/gamesexe-list.yaml
-              git commit -m "🔄 Update gamesexe-list.yaml ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+              git commit -m "$COMMIT_MSG"
               sleep 2
             fi
           done
