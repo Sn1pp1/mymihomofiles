@@ -5,47 +5,7 @@ OUTPUT_DIR="output"
 TEMP_DIR=$(mktemp -d)
 
 # Очистка TEMP_DIR при любом выходе (успех/ошибка)
-trap "rm -rf $TEMP_DIR" EXIT
-
-# ============================================
-# ФУНКЦИИ ДЛЯ ОЧИСТКИ И ВАЛИДАЦИИ
-# ============================================
-
-parse_domain_fast() {
-    # Убираем префиксы (case-insensitive через GNU sed)
-    sed -E 's/^(DOMAIN|DOMAIN-SUFFIX|DOMAIN-KEYWORD|FULL|HOST|KEYWORD|REGEXP|REGEX|HOST-SUFFIX|HOST-KEYWORD|HOST-REGEX|GEOSITE|GEOIP|AND|OR|NOT|URL-REGEX|URL-REGEXP|USER-AGENT|SCRIPT|PROCESS-NAME|PROCESS-PATH|PORT|DST-PORT|SRC-PORT|IN-PORT|NETWORK|IN-NAME|IN-TYPE)://I' | \
-    # Убираем +. *. в начале
-    sed -E 's/^(\+\.?|\*\.?|\.+)//' | \
-    # Убираем протоколы
-    sed -E 's|^https?://||' | \
-    # Убираем @ и всё до него (email)
-    sed -E 's/^[^@]*@//' | \
-    # Убираем порты
-    sed -E 's/:[0-9]+$//' | \
-    # Убираем пути, query, fragment
-    sed -E 's|/.*$||; s/\?.*$//; s/#.*$//' | \
-    # Убираем запятые и всё после них (Clash format: domain,DIRECT)
-    sed 's/,.*$//' | \
-    # Убираем комментарии в конце
-    sed 's/[[:space:]]*#.*$//' | \
-    # Убираем двойные точки
-    sed 's/\.\././g' | \
-    # Убираем точки в конце
-    sed 's/\.+$//' | \
-    # Убираем пробелы в начале/конце
-    sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
-}
-
-parse_ipcidr_fast() {
-    # Убираем префиксы
-    sed -E 's/^(IPCIDR|IP-CIDR|SRC-IPCIDR|SRC-IP-CIDR|DST-IPCIDR|DST-IP-CIDR|IP|IP6|IP6-CIDR|GEOIP)://I' | \
-    # Убираем запятые и всё после них
-    sed 's/,.*$//' | \
-    # Убираем комментарии
-    sed 's/[[:space:]]*#.*$//' | \
-    # Убираем пробелы
-    sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
-}
+trap 'rm -rf "$TEMP_DIR"' EXIT
 
 # ============================================
 # ФУНКЦИИ ПРОВЕРКИ
@@ -92,8 +52,7 @@ declare -A GEOSITE_MRS=(
     ["youtube"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.mrs"
 )
 
-declare -A GEOSITE_YAML=(
-)
+declare -A GEOSITE_YAML=()
 
 declare -A GEOIP_TXT=(
     ["direct-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/direct-ip.txt"
@@ -105,25 +64,30 @@ declare -A GEOIP_MRS=(
     ["private-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"
 )
 
-declare -A GEOIP_YAML=(
-)
+declare -A GEOIP_YAML=()
 
 # ============================================
 # СКАЧИВАНИЕ MIHOMO
 # ============================================
 
 echo "⚙️ Скачиваем mihomo..."
+# Используем jq для надежного парсинга JSON (если его нет, скрипт попытается установить или использует fallback)
+if ! command -v jq &> /dev/null; then
+    echo "⚠️ jq не найден, устанавливаем..."
+    sudo apt-get update && sudo apt-get install -y jq >/dev/null 2>&1 || true
+fi
+
 LATEST_JSON=$(curl -sL --retry 3 --retry-delay 2 https://api.github.com/repos/MetaCubeX/mihomo/releases/latest)
-MIHOMO_VERSION=$(echo "$LATEST_JSON" | grep '"tag_name"' | cut -d'"' -f4)
+MIHOMO_VERSION=$(echo "$LATEST_JSON" | jq -r '.tag_name')
 echo "📦 Версия: ${MIHOMO_VERSION}"
 
-echo "$LATEST_JSON" | grep '"browser_download_url"' | cut -d'"' -f4 > "$TEMP_DIR/urls.txt"
-MIHOMO_URL=$(grep 'mihomo-linux-amd64-compatible.*\.gz' "$TEMP_DIR/urls.txt" | head -1)
-[[ -z "$MIHOMO_URL" ]] && MIHOMO_URL=$(grep 'mihomo-linux-amd64-v.*\.gz' "$TEMP_DIR/urls.txt" | head -1)
-[[ -z "$MIHOMO_URL" ]] && MIHOMO_URL=$(grep 'mihomo-linux-amd64.*\.gz' "$TEMP_DIR/urls.txt" | grep -v '\.pkg\.tar' | head -1)
+# Надежный поиск URL бинарника
+MIHOMO_URL=$(echo "$LATEST_JSON" | jq -r '.assets[].browser_download_url' | grep -E 'mihomo-linux-amd64-compatible.*\.gz$' | head -1)
+[[ -z "$MIHOMO_URL" ]] && MIHOMO_URL=$(echo "$LATEST_JSON" | jq -r '.assets[].browser_download_url' | grep -E 'mihomo-linux-amd64-v.*\.gz$' | head -1)
+[[ -z "$MIHOMO_URL" ]] && MIHOMO_URL=$(echo "$LATEST_JSON" | jq -r '.assets[].browser_download_url' | grep -E 'mihomo-linux-amd64.*\.gz$' | grep -v '\.pkg\.tar' | head -1)
 
 if [[ -z "$MIHOMO_URL" ]]; then
-    echo "❌ Не удалось найти mihomo"
+    echo "❌ Не удалось найти URL для скачивания mihomo"
     exit 1
 fi
 
@@ -138,7 +102,7 @@ TOTAL_FILES=0
 FAILED_FILES=0
 
 # ============================================
-# GeoSite TXT — КОНВЕРТАЦИЯ
+# GeoSite TXT — КОНВЕРТАЦИЯ (ОПТИМИЗИРОВАНО ЧЕРЕЗ AWK)
 # ============================================
 if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
     echo ""
@@ -165,7 +129,7 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
         curl -sL --retry 3 --retry-delay 2 "$SOURCE_URL" -o "$TEMP_DIR/${NAME}.txt"
         
         if ! check_file_size "$TEMP_DIR/${NAME}.txt" 1; then
-            echo "  ❌ Файл не скачался"
+            echo "  ❌ Файл не скачался или пуст"
             FAILED_FILES=$((FAILED_FILES + 1))
             continue
         fi
@@ -180,33 +144,55 @@ if [[ ${#GEOSITE_TXT[@]} -gt 0 ]]; then
         
         LINE_COUNT=$(wc -l < "$TEMP_DIR/${NAME}.txt")
         echo "  📊 Строк в исходнике: $LINE_COUNT"
-        echo "  🔄 Обрабатываем..."
+        echo "  🔄 Обрабатываем и формируем YAML..."
         
         if [[ -f "$OUTPUT_DIR/${NAME}.mrs" ]]; then
             cp "$OUTPUT_DIR/${NAME}.mrs" "$TEMP_DIR/${NAME}.mrs.backup"
             echo "  💾 Бэкап сохранен"
         fi
         
+        # === МОЩНЫЙ AWK ПАРСЕР (Заменяет grep | sed | while read) ===
         {
             echo "payload:"
-            
-            cat "$TEMP_DIR/${NAME}.txt" | \
-                grep -v '^[[:space:]]*#' | \
-                grep -v '^[[:space:]]*$' | \
-                parse_domain_fast | \
-                grep -v '^$' | \
-                grep -vE '^([0-9]{1,3}\.){3}[0-9]{1,3}$' | \
-                grep -vE '^[0-9a-fA-F:]+$' | \
-                grep -v ' ' | \
-                # === ИСПРАВЛЕНИЕ ЗДЕСЬ ===
-                # Разрешаем обычные домены с точкой ИЛИ валидные TLD без точки (ru, su, by, moscow, xn--)
-                grep -E '^([a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+|ru|su|by|moscow|xn--[a-zA-Z0-9-]+)$' | \
-                while IFS= read -r domain; do
-                    if [[ -n "$domain" ]]; then
-                        # Mihomo требует префикс +. для DOMAIN-SUFFIX
-                        echo "  - '+.$domain'"
-                    fi
-                done
+            awk '
+            /^[[:space:]]*#/ { next }
+            /^[[:space:]]*$/ { next }
+            {
+                # 1. Удаляем префиксы правил
+                sub(/^(DOMAIN|DOMAIN-SUFFIX|DOMAIN-KEYWORD|FULL|HOST|KEYWORD|REGEXP|REGEX|HOST-SUFFIX|HOST-KEYWORD|HOST-REGEX|GEOSITE|GEOIP|AND|OR|NOT|URL-REGEX|URL-REGEXP|USER-AGENT|SCRIPT|PROCESS-NAME|PROCESS-PATH|PORT|DST-PORT|SRC-PORT|IN-PORT|NETWORK|IN-NAME|IN-TYPE):/, "", $0)
+                
+                # 2. Удаляем +. *. в начале
+                sub(/^[+*]+\.+/, "", $0)
+                
+                # 3. Чистим URL и мусор
+                sub(/^https?:\/\//, "", $0)
+                sub(/^[^@]*@/, "", $0)
+                sub(/:[0-9]+$/, "", $0)
+                sub(/\/.*$/, "", $0)
+                sub(/\?.*$/, "", $0)
+                sub(/#.*$/, "", $0)
+                sub(/,.*$/, "", $0)
+                sub(/[[:space:]]*#.*$/, "", $0)
+                gsub(/\.\./, ".")
+                sub(/\.+$/, "", $0)
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", $0)
+
+                # 4. Базовая валидация
+                if ($0 == "") next
+                if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next # Не IP
+                if ($0 ~ /:/) next # Не IPv6
+                if ($0 ~ / /) next # Без пробелов
+
+                # 5. ГАРАНТИЯ СОХРАНЕНИЯ TLD (Whitelist)
+                if ($0 !~ /\./) {
+                    if ($0 != "ru" && $0 != "su" && $0 != "by" && $0 != "moscow" && $0 != "local" && $0 != "lan" && $0 != "internal" && $0 != "localdomain" && $0 != "example" && $0 != "invalid" && $0 != "test" && $0 !~ /^xn--/) {
+                        next # Отбрасываем мусор без точек
+                    }
+                }
+
+                # 6. Форматируем для Mihomo YAML
+                printf "  - \x27+.%s\x27\n", $0
+            }' "$TEMP_DIR/${NAME}.txt" | sort -u
         } > "$TEMP_DIR/${NAME}.yaml"
         
         DOMAIN_COUNT=$(grep -c "^  - " "$TEMP_DIR/${NAME}.yaml" 2>/dev/null || echo "0")
@@ -367,7 +353,7 @@ if [[ ${#GEOSITE_MRS[@]} -gt 0 ]]; then
 fi
 
 # ============================================
-# GeoIP TXT — КОНВЕРТАЦИЯ
+# GeoIP TXT — КОНВЕРТАЦИЯ (ОПТИМИЗИРОВАНО ЧЕРЕЗ AWK)
 # ============================================
 if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
     echo ""
@@ -407,7 +393,7 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
         
         LINE_COUNT=$(wc -l < "$TEMP_DIR/${NAME}.txt")
         echo "  📊 Строк: $LINE_COUNT"
-        echo "  🔄 Обрабатываем..."
+        echo "  🔄 Обрабатываем и формируем YAML..."
         
         if [[ -f "$OUTPUT_DIR/${NAME}.mrs" ]]; then
             cp "$OUTPUT_DIR/${NAME}.mrs" "$TEMP_DIR/${NAME}.mrs.backup"
@@ -415,18 +401,43 @@ if [[ ${#GEOIP_TXT[@]} -gt 0 ]]; then
         
         {
             echo "payload:"
-            
-            cat "$TEMP_DIR/${NAME}.txt" | \
-                grep -v '^[[:space:]]*#' | \
-                grep -v '^[[:space:]]*$' | \
-                parse_ipcidr_fast | \
-                grep -v '^$' | \
-                grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}/[0-9]{1,2}$|^[0-9a-fA-F:]+/[0-9]{1,3}$' | \
-                while IFS= read -r ip; do
-                    if [[ -n "$ip" ]]; then
-                        echo "  - '$ip'"
-                    fi
-                done
+            awk '
+            /^[[:space:]]*#/ { next }
+            /^[[:space:]]*$/ { next }
+            {
+                # 1. Удаляем префиксы
+                sub(/^(IPCIDR|IP-CIDR|SRC-IPCIDR|SRC-IP-CIDR|DST-IPCIDR|DST-IP-CIDR|IP|IP6|IP6-CIDR|GEOIP):/, "", $0)
+                
+                # 2. Чистим мусор
+                sub(/,.*$/, "", $0)
+                sub(/[[:space:]]*#.*$/, "", $0)
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", $0)
+
+                if ($0 == "") next
+
+                # 3. Валидация IPv4 CIDR
+                if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) {
+                    split($0, parts, "[./]")
+                    if (parts[5] >= 0 && parts[5] <= 32) {
+                        printf "  - \x27%s\x27\n", $0
+                        next
+                    }
+                }
+                
+                # 4. Валидация IPv6 CIDR
+                if ($0 ~ /^([0-9a-fA-F:]+)\/[0-9]+$/) {
+                    split($0, parts, "/")
+                    if (parts[2] >= 0 && parts[2] <= 128) {
+                        printf "  - \x27%s\x27\n", tolower($0)
+                        next
+                    }
+                }
+                
+                # 5. Одиночный IPv4 -> добавляем /32
+                if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) {
+                    printf "  - \x27%s/32\x27\n", $0
+                }
+            }' "$TEMP_DIR/${NAME}.txt" | sort -u
         } > "$TEMP_DIR/${NAME}.yaml"
         
         IP_COUNT=$(grep -c "^  - " "$TEMP_DIR/${NAME}.yaml" 2>/dev/null || echo "0")
