@@ -809,14 +809,6 @@ proxy-groups:
     lazy: true
 
 rule-providers:
-  category-ads:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/category-ads.mrs
-    path: ./rule-sets/category-ads.mrs
-    proxy: 🔒 VPN
   private:
     type: http
     behavior: domain
@@ -832,14 +824,6 @@ rule-providers:
     interval: 43200
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/private-ip.mrs
     path: ./rule-sets/private-ip.mrs
-    proxy: 🔒 VPN
-  games-list:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 43200
-    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/games-list.mrs
-    path: ./rule-sets/games-list.mrs
     proxy: 🔒 VPN
   youtube:
     type: http
@@ -889,10 +873,8 @@ rule-providers:
 
 rules:
   - RULE-SET,quic,REJECT
-  - RULE-SET,category-ads,REJECT
   - RULE-SET,private,♻️ БезVPN
   - RULE-SET,private-ip,♻️ БезVPN,no-resolve
-  - RULE-SET,games-list,♻️ БезVPN
   - RULE-SET,youtube,📺 YouTube
   - RULE-SET,ru-blocklist,🔒 VPN
   - RULE-SET,ru-blocklist-ip,🔒 VPN,no-resolve
