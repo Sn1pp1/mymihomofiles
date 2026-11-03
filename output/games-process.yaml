@@ -132,6 +132,7 @@ payload:
   - PROCESS-NAME,vgm.exe
   - PROCESS-NAME,vgtray.exe
   - PROCESS-NAME,yuzu.exe
+  - PROCESS-NAME,Wow.exe
   - PROCESS-NAME-REGEX,(?i).*Majestic.*
   - PROCESS-NAME-REGEX,(?i).*Rockstar.*
   - PROCESS-NAME-REGEX,(?i).*RustClient.*
