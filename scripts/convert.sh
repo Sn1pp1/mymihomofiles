@@ -44,6 +44,8 @@ check_file_size() {
 declare -A GEOSITE_TXT=(
     ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
     ["ru-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-list.txt"
+    ["games-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/games-list.txt"
+    
 )
 
 declare -A GEOSITE_MRS=(
