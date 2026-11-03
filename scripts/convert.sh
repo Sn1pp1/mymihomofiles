@@ -55,8 +55,6 @@ declare -A GEOSITE_MRS=(
 )
 
 declare -A GEOSITE_YAML=()
-    ["torrent-client"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/other/torrent-clients.yaml"
-    ["ru-app-list"]="https://github.com/legiz-ru/mihomo-rule-sets/raw/refs/heads/main/other/ru-app-list.yaml"
 
 declare -A GEOIP_TXT=(
     ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
