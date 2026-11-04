@@ -2,37 +2,8 @@ remnawave:
   includeHiddenHosts: false
 
 mixed-port: 7890
-allow-lan: true
-bind-address: "*"
-lan-allowed-ips:
-  - 10.0.0.0/8
-  - 172.16.0.0/12
-  - 192.168.0.0/16
-  - 127.0.0.0/8
-  - ::1/128
-  - ::/127
-  - 169.254.0.0/16
-  - 100.64.0.0/10
-  - 192.0.2.0/24
-  - 198.51.100.0/24
-  - 203.0.113.0/24
-  - 0.0.0.0/8
-  - 192.0.0.0/24
-  - 192.88.99.0/24
-  - 240.0.0.0/4
-  - 255.255.255.255/32
-  - 224.0.0.0/3
-  - fc00::/7
-  - fe80::/10
-  - ff00::/8
-  - ::ffff:0:0/96
-  - 64:ff9b::/96
-  - 100::/64
-  - 2001::/32
-  - 2001:20::/28
-  - 2001:db8::/32
-  - 2002::/16
-
+allow-lan: false
+bind-address: "127.0.0.1"
 tcp-concurrent: true
 enable-process: true
 find-process-mode: always
@@ -55,29 +26,18 @@ sniffer:
     - 172.16.0.0/12
     - 192.168.0.0/16
     - 127.0.0.0/8
-    - ::1/128
-    - ::/127
     - 169.254.0.0/16
     - 100.64.0.0/10
-    - 192.0.2.0/24
-    - 198.51.100.0/24
-    - 203.0.113.0/24
+    - 198.18.0.0/15
     - 0.0.0.0/8
     - 192.0.0.0/24
+    - 192.0.2.0/24
     - 192.88.99.0/24
+    - 198.51.100.0/24
+    - 203.0.113.0/24
     - 240.0.0.0/4
+    - 224.0.0.0/4
     - 255.255.255.255/32
-    - 224.0.0.0/3
-    - fc00::/7
-    - fe80::/10
-    - ff00::/8
-    - ::ffff:0:0/96
-    - 64:ff9b::/96
-    - 100::/64
-    - 2001::/32
-    - 2001:20::/28
-    - 2001:db8::/32
-    - 2002::/16
 
   skip-domain:
     - "+.lan"
@@ -85,11 +45,35 @@ sniffer:
     - "+.localdomain"
     - "+.workgroup"
     - "+.home"
+    - "+.home.arpa"
     - "+.internal"
-    - "+.corp.*"
     - "+.private"
+    - "+.corp"
+    - "+.router"
+    - "localhost"
+    - "+.localhost"
+    - "+.routerlogin.net"
+    - "+.keenetic.pro"
+    - "+.keenetic.link"
+    - "+.keenetic.name"
     - "+.msftncsi.com"
     - "+.msftconnecttest.com"
+    - "clients3.google.com"
+    - "connectivitycheck.gstatic.com"
+    - "connectivitycheck.android.com"
+    - "captive.apple.com"
+    - "+.push.apple.com"
+    - "+.mtalk.google.com"
+    - "+.push.xiaomi.com"
+    - "+.mipush.xmpush.xiaomi.com"
+    - "+.push.hicloud.com"
+    - "+.push.huawei.com"
+    - "+.push.oppomobile.com"
+    - "+.push.realme.com"
+    - "+.push.vivo.com"
+    - "+.samsungpushservice.com"
+    - "+.3gppnetwork.org"
+    - "+.ims"
 
   sniff:
     HTTP:
@@ -103,7 +87,7 @@ sniffer:
 
 tun:
   enable: true
-  stack: gVisor
+  stack: gvisor
   auto-route: true
   auto-detect-interface: true
   dns-hijack:
@@ -117,29 +101,8 @@ tun:
     - 172.16.0.0/12
     - 192.168.0.0/16
     - 127.0.0.0/8
-    - ::1/128
-    - ::/127
     - 169.254.0.0/16
-    - 100.64.0.0/10
-    - 192.0.2.0/24
-    - 198.51.100.0/24
-    - 203.0.113.0/24
-    - 0.0.0.0/8
-    - 192.0.0.0/24
-    - 192.88.99.0/24
-    - 240.0.0.0/4
-    - 255.255.255.255/32
-    - 224.0.0.0/3
-    - fc00::/7
-    - fe80::/10
-    - ff00::/8
-    - ::ffff:0:0/96
-    - 64:ff9b::/96
-    - 100::/64
-    - 2001::/32
-    - 2001:20::/28
-    - 2001:db8::/32
-    - 2002::/16
+
   exclude-package:
     [
       "air.ru.obi.mobile",
@@ -619,7 +582,7 @@ tun:
       "ru.wildberries.manager",
       "ru.wildberries.team",
       "ru.wildberries.team2",
-      "ru.wildberries.wbpayc,lient",
+      "ru.wildberries.wbpayclient",
       "ru.winelab",
       "ru.wink.music",
       "ru.wink.music.tv",
@@ -690,79 +653,108 @@ dns:
   ipv6: false
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
   fake-ip-filter:
-    - "*.lan"
-    - "*.local"
-    - "*.localdomain"
-    - "*.workgroup"
-    - "*.home"
-    - "*.internal"
-    - "*.corp.*"
-    - "*.private"
+    - "rule-set:private"
     - "localhost"
-    - "localhost.*"
-    - "*.msftncsi.com"
-    - "*.msftconnecttest.com"
-    - "*.gstatic.com"
+    - "+.localhost"
+    - "+.lan"
+    - "+.local"
+    - "+.localdomain"
+    - "+.workgroup"
+    - "+.home"
+    - "+.home.arpa"
+    - "+.internal"
+    - "+.corp"
+    - "+.private"
+    - "+.router"
+    - "+.routerlogin.net"
+    - "+.keenetic.pro"
+    - "+.keenetic.link"
+    - "+.keenetic.name"
+    - "+.msftncsi.com"
+    - "+.msftconnecttest.com"
+    - "+.ipv6.microsoft.com"
     - "clients3.google.com"
-    - "+.apple.com"
-    - "+.icloud.com"
+    - "connectivitycheck.gstatic.com"
+    - "connectivitycheck.android.com"
+    - "captive.apple.com"
+    - "+.push.apple.com"
+    - "+.mtalk.google.com"
+    - "+.push.xiaomi.com"
+    - "+.mipush.xmpush.xiaomi.com"
+    - "+.push.hicloud.com"
+    - "+.push.huawei.com"
+    - "+.push.oppomobile.com"
+    - "+.push.realme.com"
+    - "+.push.vivo.com"
+    - "+.samsungpushservice.com"
     - "+.pool.ntp.org"
-    - "+.ntp.org"
     - "time.windows.com"
+    - "time.nist.gov"
     - "time.apple.com"
+    - "time1.apple.com"
+    - "time2.apple.com"
+    - "time3.apple.com"
     - "time.google.com"
+    - "time1.google.com"
+    - "time2.google.com"
+    - "ntp.ubuntu.com"
+    - "stun.*.*"
+    - "stun.*.*.*"
+    - "+.3gppnetwork.org"
+    - "+.ims"
 
   default-nameserver:
-    - "9.9.9.10"
-    - "94.140.14.14"
-    - "77.88.8.8"
-    - "83.220.169.155"
-    - "212.109.195.93"
+    - 9.9.9.9
+    - 94.140.14.14
+    - 212.109.221.20
+    - 77.88.8.8
+    - 149.112.112.112
+    - 94.140.15.15
+    - 212.109.195.93
+    - 77.88.8.1
 
   proxy-server-nameserver:
-    - "https://9.9.9.10/dns-query#♻️ БезVPN"
-    - "https://94.140.14.14/dns-query#♻️ БезVPN"
-    - "https://77.88.8.8/dns-query#♻️ БезVPN"
-    - "https://dns.comss.one/dns-query#♻️ БезVPN"
+    - https://dns.quad9.net/dns-query#♻️ БезVPN
+    - https://dns.adguard-dns.com/dns-query#♻️ БезVPN
+    - https://dns.comss.one/dns-query#♻️ БезVPN
+    - https://common.dot.dns.yandex.net/dns-query#♻️ БезVPN
+
+  direct-nameserver-follow-policy: true
 
   direct-nameserver:
-    - "https://77.88.8.8/dns-query#♻️ БезVPN"
-    - "https://dns.comss.one/dns-query#♻️ БезVPN"
-    - "https://9.9.9.10/dns-query#♻️ БезVPN"
-    - "https://94.140.14.14/dns-query#♻️ БезVPN"
-    - "system"
+    - https://dns.quad9.net/dns-query#♻️ БезVPN
+    - https://dns.adguard-dns.com/dns-query#♻️ БезVPN
+    - https://dns.comss.one/dns-query#♻️ БезVPN
+    - https://common.dot.dns.yandex.net/dns-query#♻️ БезVPN
 
   nameserver:
-    - "https://9.9.9.10/dns-query#🌍 Остальные сайты"
-    - "https://94.140.14.14/dns-query#🌍 Остальные сайты"
-    - "https://77.88.8.8/dns-query#🌍 Остальные сайты"
-    - "https://dns.comss.one/dns-query#🌍 Остальные сайты"
+    - https://dns.quad9.net/dns-query#🌍 Остальные сайты
+    - https://dns.adguard-dns.com/dns-query#🌍 Остальные сайты
+    - https://dns.comss.one/dns-query#🌍 Остальные сайты
+    - https://common.dot.dns.yandex.net/dns-query#🌍 Остальные сайты
 
   nameserver-policy:
     "rule-set:private":
-      - "system"
-      - "77.88.8.8"
-      - "83.220.169.155"
-      - "77.88.8.1"
-      - "212.109.195.93"
+      - system
 
     "rule-set:ru-list":
-      - "https://77.88.8.8/dns-query#⚪🔵🔴 RU сайты"
-      - "https://dns.comss.one/dns-query#⚪🔵🔴 RU сайты"
-      - "system"
+      - https://dns.comss.one/dns-query#⚪🔵🔴 RU сайты
+      - https://common.dot.dns.yandex.net/dns-query#⚪🔵🔴 RU сайты
 
     "rule-set:youtube":
-      - "https://9.9.9.10/dns-query#📺 YouTube"
-      - "https://94.140.14.14/dns-query#📺 YouTube"
-      - "https://dns.comss.one/dns-query#📺 YouTube"
+      - https://dns.quad9.net/dns-query#📺 YouTube
+      - https://dns.adguard-dns.com/dns-query#📺 YouTube
+      - https://dns.comss.one/dns-query#📺 YouTube
+
     "rule-set:ru-blocklist":
-      - "https://9.9.9.10/dns-query#🔒 VPN"
-      - "https://94.140.14.14/dns-query#🔒 VPN"
-      - "https://dns.comss.one/dns-query#🔒 VPN"
+      - https://dns.quad9.net/dns-query#🔒 VPN
+      - https://dns.adguard-dns.com/dns-query#🔒 VPN
+      - https://dns.comss.one/dns-query#🔒 VPN
 
 proxies:
-  - name: "♻️ БезVPN"
+  - name: ♻️ БезVPN
     type: direct
     udp: true
 
@@ -777,15 +769,6 @@ proxy-groups:
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
     type: select
     proxies:
-      - 🔒 VPN
-
-  - name: ⚪🔵🔴 RU сайты
-    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Russia.png
-    type: select
-    remnawave:
-      include-proxies: false
-    proxies:
-      - ♻️ БезVPN
       - 🔒 VPN
 
   - name: 🌍 Остальные сайты
@@ -808,7 +791,21 @@ proxy-groups:
     hidden: true
     lazy: true
 
+  - name: ⚪🔵🔴 RU сайты
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Russia.png
+    type: select
+    hidden: true
+    remnawave:
+      include-proxies: false
+    proxies:
+      - ♻️ БезVPN
+
 rule-providers:
+  quic:
+    type: inline
+    behavior: classical
+    payload:
+      - AND,((NETWORK,udp),(DST-PORT,443))
   private:
     type: http
     behavior: domain
@@ -865,11 +862,6 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/ru-list-ip.mrs
     path: ./rule-sets/ru-list-ip.mrs
     proxy: 🔒 VPN
-  quic:
-    type: inline
-    behavior: classical
-    payload:
-      - AND,((NETWORK,udp),(DST-PORT,443))
 
 rules:
   - RULE-SET,quic,REJECT
