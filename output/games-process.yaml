@@ -1,146 +1,173 @@
 payload:
   - PROCESS-NAME,Battle.net Launcher.exe
   - PROCESS-NAME,Battle.net.exe
-  - PROCESS-NAME,Wargaming.net Game Center.exe
-  - PROCESS-NAME,ACE-Service64.exe
   - PROCESS-NAME,Agent.exe
-  - PROCESS-NAME,Among Us.exe
-  - PROCESS-NAME,ApexLauncher.exe
-  - PROCESS-NAME,BEService.exe
-  - PROCESS-NAME,BH3.exe
-  - PROCESS-NAME,BattlEye.exe
-  - PROCESS-NAME,Battle.net.exe
-  - PROCESS-NAME,BattleBitEAC.exe
   - PROCESS-NAME,BlizzardBrowser.exe
-  - PROCESS-NAME,BsgLauncher.exe
-  - PROCESS-NAME,BsgLauncher.exe
-  - PROCESS-NAME,Content Warning.exe
-  - PROCESS-NAME,Discovery-d.exe
-  - PROCESS-NAME,Discovery.exe
+  - PROCESS-NAME,Overwatch.exe
+  - PROCESS-NAME,Wow.exe
+  - PROCESS-NAME,WowClassic.exe
+  - PROCESS-NAME,Diablo IV.exe
+  - PROCESS-NAME,Diablo III.exe
+  - PROCESS-NAME,Hearthstone.exe
+  - PROCESS-NAME,Wargaming.net Game Center.exe
+  - PROCESS-NAME,WoWsLauncher.exe
+  - PROCESS-NAME,WorldOfTanks.exe
+  - PROCESS-NAME,WorldOfWarships.exe
+  - PROCESS-NAME,WorldOfWarplanes.exe
+  - PROCESS-NAME,aces.exe
+  - PROCESS-NAME,WarThunder.exe
+  - PROCESS-NAME,Enlisted.exe
+  - PROCESS-NAME,Crossout.exe
   - PROCESS-NAME,EABackgroundService.exe
   - PROCESS-NAME,EADesktop.exe
   - PROCESS-NAME,EAProxyInstaller.exe
-  - PROCESS-NAME,EasyAntiCheat.exe
-  - PROCESS-NAME,EasyAntiCheat.exe
-  - PROCESS-NAME,EasyAntiCheat_EOS.exe
-  - PROCESS-NAME,EasyAntiCheat_Setup.exe
+  - PROCESS-NAME,ApexLauncher.exe
+  - PROCESS-NAME,r5apex_dx12.exe
+  - PROCESS-NAME,EAApp.exe
+  - PROCESS-NAME,EAAntiCheat.GameServiceLauncher.exe
+  - PROCESS-NAME,EAAntiCheat.GameService.exe
   - PROCESS-NAME,EpicGamesLauncher.exe
   - PROCESS-NAME,EpicWebHelper.exe
-  - PROCESS-NAME,EscapeFromTarkov.exe
+  - PROCESS-NAME,FortniteLauncher.exe
+  - PROCESS-NAME,FortniteClient-Win64-Shipping.exe
+  - PROCESS-NAME,FortniteClient-Win64-Shipping_EAC_EOS.exe
+  - PROCESS-NAME,FortniteClient-Win64-Shipping_BE.exe
+  - PROCESS-NAME,UbisoftConnect.exe
+  - PROCESS-NAME,UbisoftGameLauncher.exe
+  - PROCESS-NAME,UbisoftGameLauncher64.exe
+  - PROCESS-NAME,RainbowSix.exe
+  - PROCESS-NAME,GalaxyClient.exe
+  - PROCESS-NAME,GalaxyCommunication.exe
+  - PROCESS-NAME,steam.exe
+  - PROCESS-NAME,SteamService.exe
+  - PROCESS-NAME,steamwebhelper.exe
+  - PROCESS-NAME,gameoverlayui.exe
+  - PROCESS-NAME,cs2.exe
+  - PROCESS-NAME,deadlock.exe
+  - PROCESS-NAME,dota2.exe
+  - PROCESS-NAME,hl2.exe
+  - PROCESS-NAME,tf.exe
+  - PROCESS-NAME,tf_win64.exe
+  - PROCESS-NAME,RiotClientServices.exe
+  - PROCESS-NAME,RiotClientUx.exe
+  - PROCESS-NAME,League of Legends.exe
+  - PROCESS-NAME,LeagueClient.exe
+  - PROCESS-NAME,VALORANT.exe
+  - PROCESS-NAME,VALORANT-Win64-Shipping.exe
+  - PROCESS-NAME,vgc.exe
+  - PROCESS-NAME,vgm.exe
+  - PROCESS-NAME,vgtray.exe
+  - PROCESS-NAME,GenshinImpact.exe
+  - PROCESS-NAME,YuanShen.exe
+  - PROCESS-NAME,StarRail.exe
+  - PROCESS-NAME,BH3.exe
+  - PROCESS-NAME,ZenlessZoneZero.exe
+  - PROCESS-NAME,Hoyoplay.exe
+  - PROCESS-NAME,HYP.exe
+  - PROCESS-NAME,HYPHelper.exe
+  - PROCESS-NAME,HYUpdater.exe
+  - PROCESS-NAME,PUBG.exe
+  - PROCESS-NAME,ExecPubg.exe
+  - PROCESS-NAME,TslGame.exe
+  - PROCESS-NAME,TslGame_BE.exe
+  - PROCESS-NAME,TslGame_ZK.exe
+  - PROCESS-NAME,BEService.exe
+  - PROCESS-NAME,BsgLauncher.exe
   - PROCESS-NAME,EscapeFromTarkov.exe
   - PROCESS-NAME,EscapeFromTarkovArena.exe
   - PROCESS-NAME,EscapeFromTarkovArena_BE.exe
   - PROCESS-NAME,EscapeFromTarkov_BE.exe
-  - PROCESS-NAME,ExecPubg.exe
-  - PROCESS-NAME,FACEITAC.exe
-  - PROCESS-NAME,FACEITClient.exe
-  - PROCESS-NAME,FiveM.exe
-  - PROCESS-NAME,FragPunk.exe
-  - PROCESS-NAME,GalaxyClient.exe
-  - PROCESS-NAME,GalaxyCommunication.exe
-  - PROCESS-NAME,GamingServices.exe
-  - PROCESS-NAME,Garena.exe
-  - PROCESS-NAME,GenshinImpact.exe
-  - PROCESS-NAME,GenshinImpact.exe
-  - PROCESS-NAME,HYP.exe
-  - PROCESS-NAME,HYPHelper.exe
-  - PROCESS-NAME,HYUpdater.exe
-  - PROCESS-NAME,Hoyoplay.exe
-  - PROCESS-NAME,HuntGame.exe
-  - PROCESS-NAME,KRSDKExternal.exe    
-  - PROCESS-NAME,KRWebView.exe # In-game webview
-  - PROCESS-NAME,League of Legends.exe
-  - PROCESS-NAME,LeagueClient.exe
-  - PROCESS-NAME,MIMESIS.exe
-  - PROCESS-NAME,MapleStory.exe
-  - PROCESS-NAME,Marvel-Win64-Shipping.exe
-  - PROCESS-NAME,MarvelRivals_Launcher.exe
+  - PROCESS-NAME,Discovery.exe
+  - PROCESS-NAME,Discovery-d.exe
   - PROCESS-NAME,Minecraft.Windows.exe
   - PROCESS-NAME,Minecraft.exe
   - PROCESS-NAME,MinecraftLauncher.exe
-  - PROCESS-NAME,NexonPlug.exe
-  - PROCESS-NAME,Overwatch.exe
-  - PROCESS-NAME,PEAK.exe
-  - PROCESS-NAME,PUBG.exe
-  - PROCESS-NAME,PartyAnimals.exe
-  - PROCESS-NAME,Phasmophobia.exe
-  - PROCESS-NAME,PlayGTAV.exe
-  - PROCESS-NAME,Quaver.exe
-  - PROCESS-NAME,RainbowSix.exe
-  - PROCESS-NAME,RiotClientServices.exe
-  - PROCESS-NAME,RiotClientUx.exe
   - PROCESS-NAME,RobloxPlayerBeta.exe
   - PROCESS-NAME,RobloxStudioBeta.exe
+  - PROCESS-NAME,PlayGTAV.exe
   - PROCESS-NAME,RockstarGamesLauncher.exe
-  - PROCESS-NAME,Ryujinx.exe
+  - PROCESS-NAME,GamingServices.exe
+  - PROCESS-NAME,GamingServicesNet.exe
+  - PROCESS-NAME,WindowsGamingProxy.exe
+  - PROCESS-NAME,XboxGameOverlay.exe
+  - PROCESS-NAME,XboxPcApp.exe
+  - PROCESS-NAME,FACEITAC.exe
+  - PROCESS-NAME,FACEITClient.exe
+  - PROCESS-NAME,faceitclient.exe
+  - PROCESS-NAME,faceitservice.exe
+  - PROCESS-NAME,EasyAntiCheat.exe
+  - PROCESS-NAME,EasyAntiCheat_EOS.exe
+  - PROCESS-NAME,EasyAntiCheat_Setup.exe
+  - PROCESS-NAME,BattlEye.exe
+  - PROCESS-NAME,ACE-Service64.exe
+  - PROCESS-NAME,TenProtect.exe
   - PROCESS-NAME,SGuard64.exe
   - PROCESS-NAME,SGuardSvc64.exe
   - PROCESS-NAME,SGuardUpdate64.exe
-  - PROCESS-NAME,StarRail.exe
-  - PROCESS-NAME,StarRail.exe
-  - PROCESS-NAME,SteamService.exe
-  - PROCESS-NAME,TPHelper.exe
-  - PROCESS-NAME,TenProtect.exe
-  - PROCESS-NAME,TslGame.exe
-  - PROCESS-NAME,TslGame_BE.exe
-  - PROCESS-NAME,TslGame_ZK.exe
-  - PROCESS-NAME,UAGame.exe
-  - PROCESS-NAME,UbisoftConnect.exe
-  - PROCESS-NAME,UbisoftGameLauncher.exe
-  - PROCESS-NAME,UbisoftGameLauncher64.exe
-  - PROCESS-NAME,UmamusumePrettyDerby.exe
-  - PROCESS-NAME,VALORANT-Win64-Shipping.exe
-  - PROCESS-NAME,VALORANT-Win64-Shipping.exe
-  - PROCESS-NAME,VALORANT.exe
-  - PROCESS-NAME,WindowsGamingProxy.exe
-  - PROCESS-NAME,WoWsLauncher.exe
-  - PROCESS-NAME,WorldOfTanks.exe
-  - PROCESS-NAME,WorldOfWarships.exe
-  - PROCESS-NAME,Wuthering Waves.exe
-  - PROCESS-NAME,XboxGameOverlay.exe
-  - PROCESS-NAME,XboxPcApp.exe
-  - PROCESS-NAME,YuanShen.exe
-  - PROCESS-NAME,ZFGameBrowser.exe # In-game webview
-  - PROCESS-NAME,ZenlessZoneZero.exe
-  - PROCESS-NAME,ZenlessZoneZero.exe
-  - PROCESS-NAME,aces.exe
-  - PROCESS-NAME,altv-webengine.exe
-  - PROCESS-NAME,altv.exe
-  - PROCESS-NAME,amtrucks.exe
-  - PROCESS-NAME,crs-handler.exe
-  - PROCESS-NAME,cs2.exe
-  - PROCESS-NAME,deadlock.exe
-  - PROCESS-NAME,dota2.exe
-  - PROCESS-NAME,eurotrucks2.exe
-  - PROCESS-NAME,faceitclient.exe
-  - PROCESS-NAME,faceitservice.exe
   - PROCESS-NAME,gameguard.des
-  - PROCESS-NAME,gameoverlayui.exe
-  - PROCESS-NAME,helldivers2.exe
-  - PROCESS-NAME,hl2.exe
-  - PROCESS-NAME,javaw.exe
+  - PROCESS-NAME,nProtectGameGuard.exe
+  - PROCESS-NAME,Among Us.exe
+  - PROCESS-NAME,Content Warning.exe
+  - PROCESS-NAME,FragPunk.exe
+  - PROCESS-NAME,HuntGame.exe
+  - PROCESS-NAME,MIMESIS.exe
+  - PROCESS-NAME,Marvel-Win64-Shipping.exe
+  - PROCESS-NAME,MarvelRivals_Launcher.exe
+  - PROCESS-NAME,PEAK.exe
+  - PROCESS-NAME,PartyAnimals.exe
+  - PROCESS-NAME,Phasmophobia.exe
+  - PROCESS-NAME,Quaver.exe
+  - PROCESS-NAME,UmamusumePrettyDerby.exe
+  - PROCESS-NAME,Wuthering Waves.exe
+  - PROCESS-NAME,MapleStory.exe
+  - PROCESS-NAME,NexonPlug.exe
+  - PROCESS-NAME,Garena.exe
+  - PROCESS-NAME,KRSDKExternal.exe
+  - PROCESS-NAME,KRWebView.exe
+  - PROCESS-NAME,TPHelper.exe
+  - PROCESS-NAME,ZFGameBrowser.exe
+  - PROCESS-NAME,Ryujinx.exe
+  - PROCESS-NAME,yuzu.exe
   - PROCESS-NAME,mumu.exe
   - PROCESS-NAME,osu!.exe
-  - PROCESS-NAME,r5apex_dx12.exe
-  - PROCESS-NAME,start_protected_game.exe
-  - PROCESS-NAME,steam.exe
-  - PROCESS-NAME,steamwebhelper.exe
-  - PROCESS-NAME,tf.exe
-  - PROCESS-NAME,tf_win64.exe
-  - PROCESS-NAME,vgc.exe
-  - PROCESS-NAME,vgc.exe
-  - PROCESS-NAME,vgm.exe
-  - PROCESS-NAME,vgtray.exe
-  - PROCESS-NAME,yuzu.exe
-  - PROCESS-NAME,Wow.exe
+  - PROCESS-NAME,FiveM.exe
+  - PROCESS-NAME,altv.exe
+  - PROCESS-NAME,altv-webengine.exe
+  - PROCESS-NAME,amtrucks.exe
+  - PROCESS-NAME,eurotrucks2.exe
+  - PROCESS-NAME,crs-handler.exe
+  - PROCESS-NAME,UAGame.exe
+  - PROCESS-NAME,Arma3_x64.exe
+  - PROCESS-NAME,DayZ_x64.exe
+  - PROCESS-NAME,Warframe.x64.exe
+  - PROCESS-NAME,Warframe.exe
+  - PROCESS-NAME,PathOfExile.exe
+  - PROCESS-NAME,PathOfExile_x64.exe
+  - PROCESS-NAME,PathOfExile_x64Steam.exe
+  - PROCESS-NAME,destiny2.exe
+  - PROCESS-NAME,Gw2-64.exe
+  - PROCESS-NAME,eso64.exe
+  - PROCESS-NAME,BlackDesert64.exe
+  - PROCESS-NAME,BlackDesertLauncher.exe
+  - PROCESS-NAME,Palworld-Win64-Shipping.exe
+  - PROCESS-NAME,itch.exe
+  - PROCESS-NAME,ffxivlauncher.exe
+  - PROCESS-NAME,ffxivboot.exe
+  - PROCESS-NAME,ffxiv_dx11.exe
+  - PROCESS-NAME,Playnite.DesktopApp.exe
+  - PROCESS-NAME,Paradox Launcher.exe
+  - PROCESS-NAME,Amazon Games.exe
+  - PROCESS-NAME,Discovery.exe
+  - PROCESS-NAME,Discovery-d.exe
+  - PROCESS-NAME,EasyAntiCheat_Setup.exe
+  - PROCESS-NAME,EasyAntiCheat.exe
+  - PROCESS-NAME,EasyAntiCheat_EOS.exe
   - PROCESS-NAME-REGEX,(?i).*Majestic.*
   - PROCESS-NAME-REGEX,(?i).*Rockstar.*
   - PROCESS-NAME-REGEX,(?i).*RustClient.*
   - PROCESS-NAME-REGEX,(?i).*SocialClub.*
   - PROCESS-NAME-REGEX,(?i).*Vanguard.*
-  - PROCESS-NAME-REGEX,(?i).*Win64-Shipping.*
   - PROCESS-NAME-REGEX,(?i).*ragemp.*
-  - PROCESS-NAME-REGEX,(?i).*vanguard.*
   - PROCESS-NAME-REGEX,(?i)^AstrumPlay
   - PROCESS-NAME-REGEX,.*GTA5.*
   - PROCESS-NAME-REGEX,Aimbeast.*
@@ -148,3 +175,4 @@ payload:
   - PROCESS-NAME-REGEX,DeadByDaylight.*
   - PROCESS-NAME-REGEX,EscapeFromTarkov.*
   - PROCESS-NAME-REGEX,TslGame.*
+  - PROCESS-NAME-REGEX,(?i).*Win64-Shipping.*
