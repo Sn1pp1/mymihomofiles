@@ -1,0 +1,111 @@
+payload:
+  # Windows
+  - PROCESS-NAME,uTorrent.exe
+  - PROCESS-NAME,BitTorrent.exe
+  - PROCESS-NAME,utweb.exe
+  - PROCESS-NAME,btweb.exe
+  - PROCESS-NAME,qbittorrent.exe
+  - PROCESS-NAME,deluge.exe
+  - PROCESS-NAME,Azureus.exe
+  - PROCESS-NAME,tixati.exe
+  - PROCESS-NAME,transmission-qt.exe
+  - PROCESS-NAME,transmission-daemon.exe
+  - PROCESS-NAME,WebTorrent.exe
+  - PROCESS-NAME,PicoTorrent.exe
+  - PROCESS-NAME,FrostWire.exe
+  - PROCESS-NAME,Tribler.exe
+  - PROCESS-NAME,BitComet.exe
+  - PROCESS-NAME,mediaget.exe
+  - PROCESS-NAME,uFiler.exe
+  - PROCESS-NAME,TorrServer-windows-386.exe
+  - PROCESS-NAME,TorrServer-windows-amd64.exe
+  - PROCESS-NAME,BitSpirit.exe
+  - PROCESS-NAME,BitLord.exe
+  - PROCESS-NAME,Zona.exe
+  - PROCESS-NAME,Halite.exe
+  - PROCESS-NAME,aria2c.exe
+  - PROCESS-NAME,rqbit.exe
+
+  # Windows / macOS application process names
+  - PROCESS-NAME,Transmission
+  - PROCESS-NAME,qBittorrent
+  - PROCESS-NAME,BitTorrent Web
+  - PROCESS-NAME,BitTorrent
+  - PROCESS-NAME,uTorrent Web
+  - PROCESS-NAME,uTorrent
+  - PROCESS-NAME,Folx
+  - PROCESS-NAME,Deluge
+  - PROCESS-NAME,Vuze
+  - PROCESS-NAME,FrostWire
+  - PROCESS-NAME,BiglyBT
+  - PROCESS-NAME,BitLord
+  - PROCESS-NAME,BitComet
+  - PROCESS-NAME,WebTorrent
+  - PROCESS-NAME,WebTorrent Helper
+  - PROCESS-NAME,WebTorrent Helper (GPU)
+  - PROCESS-NAME,WebTorrent Helper (Renderer)
+  - PROCESS-NAME,Free Download Manager
+  - PROCESS-NAME,mediaget
+  - PROCESS-NAME,fdm
+  - PROCESS-NAME,Zona
+  - PROCESS-NAME,BitSpirit
+  - PROCESS-NAME,Halite
+  - PROCESS-NAME,Torch
+  - PROCESS-NAME,Rain
+
+  # Linux / CLI
+  - PROCESS-NAME,qbittorrent-nox
+  - PROCESS-NAME,transmission-qt
+  - PROCESS-NAME,transmission-gtk
+  - PROCESS-NAME,transmission-daemon
+  - PROCESS-NAME,transmission-cli
+  - PROCESS-NAME,deluged
+  - PROCESS-NAME,deluge-gtk
+  - PROCESS-NAME,fragments
+  - PROCESS-NAME,tixati
+  - PROCESS-NAME,frostwire
+  - PROCESS-NAME,vuze
+  - PROCESS-NAME,azureus
+  - PROCESS-NAME,ktorrent
+  - PROCESS-NAME,rtorrent
+  - PROCESS-NAME,tribler
+  - PROCESS-NAME,torrserver
+  - PROCESS-NAME,aria2c
+  - PROCESS-NAME,rqbit
+  - PROCESS-NAME,elementum
+  - PROCESS-NAME,torrest
+  - PROCESS-NAME,BitSpirit
+  - PROCESS-NAME,BitLord
+  - PROCESS-NAME,Zona
+  - PROCESS-NAME,Halite
+  - PROCESS-NAME,Torch
+  - PROCESS-NAME,Rain
+
+  # Android
+  - PROCESS-NAME,org.proninyaroslav.libretorrent
+  - PROCESS-NAME,hu.tagsoft.ttorrent.noads
+  - PROCESS-NAME,com.utorrent.client
+  - PROCESS-NAME,hu.tagsoft.ttorrent.lite
+  - PROCESS-NAME,com.utorrent.client.pro
+  - PROCESS-NAME,com.mtorrent.client
+  - PROCESS-NAME,com.bittorrent.client.pro
+  - PROCESS-NAME,com.gray.pikatorrent
+  - PROCESS-NAME,com.yablio.torrentium
+  - PROCESS-NAME,in.gopalakrishnareddy.torrent
+  - PROCESS-NAME,intelligems.torrdroid
+  - PROCESS-NAME,org.jsp.wide
+  - PROCESS-NAME,mobi.zona
+  - PROCESS-NAME,com.bittorrent.client
+  - PROCESS-NAME,com.dv.adm
+  - PROCESS-NAME,org.freedownloadmanager.fdm
+  - PROCESS-NAME,com.houseoflife.bitlord
+  - PROCESS-NAME,com.amnis
+  - PROCESS-NAME,com.biglybt.android.client
+  - PROCESS-NAME,com.delphicoder.flud
+  - PROCESS-NAME,com.delphicoder.flud.paid
+  - PROCESS-NAME,com.mediaget.android
+  - PROCESS-NAME,com.bitcomet.android
+  - PROCESS-NAME,com.mobilityflow.torrent
+  - PROCESS-NAME,com.aelitis.azureus
+  - PROCESS-NAME,com.rqbit
+  - PROCESS-NAME,com.aria2
