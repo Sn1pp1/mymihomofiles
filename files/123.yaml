@@ -27,19 +27,13 @@ sniffer:
     - 192.168.0.0/16
     - 127.0.0.0/8
     - 169.254.0.0/16
-    - 100.64.0.0/10
-    - 198.18.0.0/15
-    - 0.0.0.0/8
-    - 192.0.0.0/24
-    - 192.0.2.0/24
-    - 192.88.99.0/24
-    - 198.51.100.0/24
-    - 203.0.113.0/24
-    - 240.0.0.0/4
-    - 224.0.0.0/4
-    - 255.255.255.255/32
+    - "::1/128"
+    - "fc00::/7"
+    - "fe80::/10"
 
   skip-domain:
+    - "localhost"
+    - "+.localhost"
     - "+.lan"
     - "+.local"
     - "+.localdomain"
@@ -47,33 +41,14 @@ sniffer:
     - "+.home"
     - "+.home.arpa"
     - "+.internal"
-    - "+.private"
     - "+.corp"
+    - "+.private"
     - "+.router"
-    - "localhost"
-    - "+.localhost"
     - "+.routerlogin.net"
     - "+.keenetic.pro"
     - "+.keenetic.link"
     - "+.keenetic.name"
-    - "+.msftncsi.com"
-    - "+.msftconnecttest.com"
-    - "clients3.google.com"
-    - "connectivitycheck.gstatic.com"
-    - "connectivitycheck.android.com"
-    - "captive.apple.com"
     - "+.push.apple.com"
-    - "+.mtalk.google.com"
-    - "+.push.xiaomi.com"
-    - "+.mipush.xmpush.xiaomi.com"
-    - "+.push.hicloud.com"
-    - "+.push.huawei.com"
-    - "+.push.oppomobile.com"
-    - "+.push.realme.com"
-    - "+.push.vivo.com"
-    - "+.samsungpushservice.com"
-    - "+.3gppnetwork.org"
-    - "+.ims"
 
   sniff:
     HTTP:
@@ -102,6 +77,9 @@ tun:
     - 192.168.0.0/16
     - 127.0.0.0/8
     - 169.254.0.0/16
+    - "::1/128"
+    - "fc00::/7"
+    - "fe80::/10"
 
   exclude-package:
     [
@@ -656,8 +634,9 @@ dns:
   fake-ip-filter-mode: blacklist
   fake-ip-filter:
     - "rule-set:private"
+    - "rule-set:direct-list"
+    - "rule-set:games-list"
     - "localhost"
-    - "+.localhost"
     - "+.lan"
     - "+.local"
     - "+.localdomain"
@@ -675,35 +654,72 @@ dns:
     - "+.msftncsi.com"
     - "+.msftconnecttest.com"
     - "+.ipv6.microsoft.com"
-    - "clients3.google.com"
-    - "connectivitycheck.gstatic.com"
-    - "connectivitycheck.android.com"
-    - "captive.apple.com"
+    - "+.clients3.google.com"
+    - "+.connectivitycheck.gstatic.com"
+    - "+.connectivitycheck.android.com"
+    - "+.android.apis.google.com"
+    - "+.device-provisioning.googleapis.com"
+    - "+.firebaseinstallations.googleapis.com"
+    - "+.captive.apple.com"
+    - "+.configuration.apple.com"
+    - "+.gdmf.apple.com"
+    - "+.mesu.apple.com"
     - "+.push.apple.com"
+    - "+.wns.windows.com"
+    - "+.notify.windows.com"
     - "+.mtalk.google.com"
+    - "+.mtalk4.google.com"
+    - "+.mtalk-dev.google.com"
+    - "+.mtalk-staging.google.com"
+    - "+.alt1-mtalk.google.com"
+    - "+.alt2-mtalk.google.com"
+    - "+.alt3-mtalk.google.com"
+    - "+.alt4-mtalk.google.com"
+    - "+.alt5-mtalk.google.com"
+    - "+.alt6-mtalk.google.com"
+    - "+.alt7-mtalk.google.com"
+    - "+.alt8-mtalk.google.com"
     - "+.push.xiaomi.com"
     - "+.mipush.xmpush.xiaomi.com"
+    - "+.ru-api.xmpush.global.xiaomi.com"
+    - "+.fr-api.xmpush.global.xiaomi.com"
+    - "+.idmb-api.xmpush.global.xiaomi.com"
+    - "+.sgp-api.xmpush.global.xiaomi.com"
     - "+.push.hicloud.com"
     - "+.push.huawei.com"
     - "+.push.oppomobile.com"
     - "+.push.realme.com"
     - "+.push.vivo.com"
     - "+.samsungpushservice.com"
+    - "+.push.samsungosp.com"
+    - "+.gateway.push.samsungosp.com"
+    - "+.pushmessage.samsung.com"
+    - "+.scs.samsungqbe.com"
+    - "+.time.apple.com"
+    - "+.time-ios.apple.com"
+    - "+.time-macos.apple.com"
+    - "+.time.euro.apple.com"
+    - "+.time.asia.apple.com"
+    - "+.time1.apple.com"
+    - "+.time2.apple.com"
+    - "+.time3.apple.com"
+    - "+.time4.apple.com"
+    - "+.time5.apple.com"
+    - "+.time6.apple.com"
+    - "+.time7.apple.com"
+    - "+.time.google.com"
+    - "+.time1.google.com"
+    - "+.time2.google.com"
+    - "+.time3.google.com"
+    - "+.time4.google.com"
+    - "+.time.android.com"
+    - "+.time.windows.com"
     - "+.pool.ntp.org"
-    - "time.windows.com"
-    - "time.nist.gov"
-    - "time.apple.com"
-    - "time1.apple.com"
-    - "time2.apple.com"
-    - "time3.apple.com"
-    - "time.google.com"
-    - "time1.google.com"
-    - "time2.google.com"
-    - "ntp.ubuntu.com"
-    - "stun.*.*"
-    - "stun.*.*.*"
+    - "+.ntp.ubuntu.com"
     - "+.3gppnetwork.org"
     - "+.ims"
+    - "stun.*.*"
+    - "stun.*.*.*"
 
   default-nameserver:
     - 9.9.9.9
@@ -822,6 +838,38 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/private-ip.mrs
     path: ./rule-sets/private-ip.mrs
     proxy: 🔒 VPN
+  direct-list:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 43200
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/direct-list.mrs
+    path: ./rule-sets/direct-list.mrs
+    proxy: 🔒 VPN
+  torrent-process:
+    type: http
+    behavior: classical
+    format: yaml
+    interval: 43200
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/torrent-process.yaml
+    path: ./rule-sets/torrent-process.yaml
+    proxy: 🔒 VPN
+  games-list:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 43200
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/games-list.mrs
+    path: ./rule-sets/games-list.mrs
+    proxy: 🔒 VPN
+  games-process:
+    type: http
+    behavior: classical
+    format: yaml
+    interval: 43200
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/games-process.yaml
+    path: ./rule-sets/games-process.yaml
+    proxy: 🔒 VPN
   youtube:
     type: http
     behavior: domain
@@ -867,6 +915,10 @@ rules:
   - RULE-SET,quic,REJECT
   - RULE-SET,private,♻️ БезVPN
   - RULE-SET,private-ip,♻️ БезVPN,no-resolve
+  - RULE-SET,direct-list,♻️ БезVPN
+  - RULE-SET,torrent-process,♻️ БезVPN
+  - RULE-SET,games-list,♻️ БезVPN
+  - RULE-SET,games-process,♻️ БезVPN
   - RULE-SET,youtube,📺 YouTube
   - RULE-SET,ru-blocklist,🔒 VPN
   - RULE-SET,ru-blocklist-ip,🔒 VPN,no-resolve
