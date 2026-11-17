@@ -42,6 +42,7 @@ check_file_size() {
 # ============================================
 
 declare -A GEOSITE_TXT=(
+    ["ads-youtube"]="https://github.com/kboghdady/youTube_ads_4_pi-hole/raw/refs/heads/master/youtubelist.txt"
     ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
     ["ru-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-list.txt"
     ["direct-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/direct-list.txt" 
