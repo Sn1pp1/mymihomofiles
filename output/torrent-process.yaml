@@ -1,3 +1,4 @@
+
 payload:
   # Windows
   - PROCESS-NAME,uTorrent.exe
@@ -25,14 +26,15 @@ payload:
   - PROCESS-NAME,Halite.exe
   - PROCESS-NAME,aria2c.exe
   - PROCESS-NAME,rqbit.exe
+  - PROCESS-NAME,fdm.exe
 
-  # Windows / macOS application process names
+  # macOS
   - PROCESS-NAME,Transmission
   - PROCESS-NAME,qBittorrent
-  - PROCESS-NAME,BitTorrent Web
   - PROCESS-NAME,BitTorrent
-  - PROCESS-NAME,uTorrent Web
+  - PROCESS-NAME,BitTorrent Web
   - PROCESS-NAME,uTorrent
+  - PROCESS-NAME,uTorrent Web
   - PROCESS-NAME,Folx
   - PROCESS-NAME,Deluge
   - PROCESS-NAME,Vuze
