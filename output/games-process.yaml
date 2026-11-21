@@ -1,4 +1,6 @@
+
 payload:
+  # Blizzard / Battle.net
   - PROCESS-NAME,Battle.net Launcher.exe
   - PROCESS-NAME,Battle.net.exe
   - PROCESS-NAME,Agent.exe
@@ -9,15 +11,21 @@ payload:
   - PROCESS-NAME,Diablo IV.exe
   - PROCESS-NAME,Diablo III.exe
   - PROCESS-NAME,Hearthstone.exe
+
+  # Wargaming
   - PROCESS-NAME,Wargaming.net Game Center.exe
   - PROCESS-NAME,WoWsLauncher.exe
   - PROCESS-NAME,WorldOfTanks.exe
   - PROCESS-NAME,WorldOfWarships.exe
   - PROCESS-NAME,WorldOfWarplanes.exe
   - PROCESS-NAME,aces.exe
+
+  # Gaijin
   - PROCESS-NAME,WarThunder.exe
   - PROCESS-NAME,Enlisted.exe
   - PROCESS-NAME,Crossout.exe
+
+  # EA App / Origin / Apex Legends
   - PROCESS-NAME,EABackgroundService.exe
   - PROCESS-NAME,EADesktop.exe
   - PROCESS-NAME,EAProxyInstaller.exe
@@ -26,18 +34,26 @@ payload:
   - PROCESS-NAME,EAApp.exe
   - PROCESS-NAME,EAAntiCheat.GameServiceLauncher.exe
   - PROCESS-NAME,EAAntiCheat.GameService.exe
+
+  # Epic Games / Fortnite
   - PROCESS-NAME,EpicGamesLauncher.exe
   - PROCESS-NAME,EpicWebHelper.exe
   - PROCESS-NAME,FortniteLauncher.exe
   - PROCESS-NAME,FortniteClient-Win64-Shipping.exe
   - PROCESS-NAME,FortniteClient-Win64-Shipping_EAC_EOS.exe
   - PROCESS-NAME,FortniteClient-Win64-Shipping_BE.exe
+
+  # Ubisoft Connect
   - PROCESS-NAME,UbisoftConnect.exe
   - PROCESS-NAME,UbisoftGameLauncher.exe
   - PROCESS-NAME,UbisoftGameLauncher64.exe
   - PROCESS-NAME,RainbowSix.exe
+
+  # GOG Galaxy
   - PROCESS-NAME,GalaxyClient.exe
   - PROCESS-NAME,GalaxyCommunication.exe
+
+  # Steam / Valve
   - PROCESS-NAME,steam.exe
   - PROCESS-NAME,SteamService.exe
   - PROCESS-NAME,steamwebhelper.exe
@@ -48,8 +64,12 @@ payload:
   - PROCESS-NAME,hl2.exe
   - PROCESS-NAME,tf.exe
   - PROCESS-NAME,tf_win64.exe
+
+  # Riot Games
   - PROCESS-NAME,RiotClientServices.exe
   - PROCESS-NAME,RiotClientUx.exe
+  - PROCESS-NAME,RiotClientUxRender.exe
+  - PROCESS-NAME,RiotClientCrashHandler.exe
   - PROCESS-NAME,League of Legends.exe
   - PROCESS-NAME,LeagueClient.exe
   - PROCESS-NAME,VALORANT.exe
@@ -57,6 +77,8 @@ payload:
   - PROCESS-NAME,vgc.exe
   - PROCESS-NAME,vgm.exe
   - PROCESS-NAME,vgtray.exe
+
+  # HoYoverse
   - PROCESS-NAME,GenshinImpact.exe
   - PROCESS-NAME,YuanShen.exe
   - PROCESS-NAME,StarRail.exe
@@ -66,35 +88,53 @@ payload:
   - PROCESS-NAME,HYP.exe
   - PROCESS-NAME,HYPHelper.exe
   - PROCESS-NAME,HYUpdater.exe
+
+  # PUBG
   - PROCESS-NAME,PUBG.exe
   - PROCESS-NAME,ExecPubg.exe
   - PROCESS-NAME,TslGame.exe
   - PROCESS-NAME,TslGame_BE.exe
   - PROCESS-NAME,TslGame_ZK.exe
   - PROCESS-NAME,BEService.exe
+
+  # Escape from Tarkov
   - PROCESS-NAME,BsgLauncher.exe
   - PROCESS-NAME,EscapeFromTarkov.exe
   - PROCESS-NAME,EscapeFromTarkovArena.exe
   - PROCESS-NAME,EscapeFromTarkovArena_BE.exe
   - PROCESS-NAME,EscapeFromTarkov_BE.exe
+
+  # HoYo / другие игровые лаунчеры
   - PROCESS-NAME,Discovery.exe
   - PROCESS-NAME,Discovery-d.exe
+
+  # Minecraft
   - PROCESS-NAME,Minecraft.Windows.exe
   - PROCESS-NAME,Minecraft.exe
   - PROCESS-NAME,MinecraftLauncher.exe
+
+  # Roblox
   - PROCESS-NAME,RobloxPlayerBeta.exe
   - PROCESS-NAME,RobloxStudioBeta.exe
+
+  # Rockstar Games / GTA
   - PROCESS-NAME,PlayGTAV.exe
   - PROCESS-NAME,RockstarGamesLauncher.exe
+
+  # Xbox / Microsoft Gaming
   - PROCESS-NAME,GamingServices.exe
   - PROCESS-NAME,GamingServicesNet.exe
   - PROCESS-NAME,WindowsGamingProxy.exe
   - PROCESS-NAME,XboxGameOverlay.exe
   - PROCESS-NAME,XboxPcApp.exe
+
+  # FACEIT
   - PROCESS-NAME,FACEITAC.exe
   - PROCESS-NAME,FACEITClient.exe
   - PROCESS-NAME,faceitclient.exe
   - PROCESS-NAME,faceitservice.exe
+
+  # Anti-cheat
   - PROCESS-NAME,EasyAntiCheat.exe
   - PROCESS-NAME,EasyAntiCheat_EOS.exe
   - PROCESS-NAME,EasyAntiCheat_Setup.exe
@@ -106,6 +146,9 @@ payload:
   - PROCESS-NAME,SGuardUpdate64.exe
   - PROCESS-NAME,gameguard.des
   - PROCESS-NAME,nProtectGameGuard.exe
+  - PROCESS-NAME,start_protected_game.exe
+
+  # Other games
   - PROCESS-NAME,Among Us.exe
   - PROCESS-NAME,Content Warning.exe
   - PROCESS-NAME,FragPunk.exe
@@ -157,11 +200,8 @@ payload:
   - PROCESS-NAME,Playnite.DesktopApp.exe
   - PROCESS-NAME,Paradox Launcher.exe
   - PROCESS-NAME,Amazon Games.exe
-  - PROCESS-NAME,Discovery.exe
-  - PROCESS-NAME,Discovery-d.exe
-  - PROCESS-NAME,EasyAntiCheat_Setup.exe
-  - PROCESS-NAME,EasyAntiCheat.exe
-  - PROCESS-NAME,EasyAntiCheat_EOS.exe
+
+  # Regex — дополнительные игровые процессы
   - PROCESS-NAME-REGEX,(?i).*Majestic.*
   - PROCESS-NAME-REGEX,(?i).*Rockstar.*
   - PROCESS-NAME-REGEX,(?i).*RustClient.*
@@ -169,10 +209,10 @@ payload:
   - PROCESS-NAME-REGEX,(?i).*Vanguard.*
   - PROCESS-NAME-REGEX,(?i).*ragemp.*
   - PROCESS-NAME-REGEX,(?i)^AstrumPlay
-  - PROCESS-NAME-REGEX,.*GTA5.*
-  - PROCESS-NAME-REGEX,Aimbeast.*
-  - PROCESS-NAME-REGEX,BattleBit.*
-  - PROCESS-NAME-REGEX,DeadByDaylight.*
-  - PROCESS-NAME-REGEX,EscapeFromTarkov.*
-  - PROCESS-NAME-REGEX,TslGame.*
+  - PROCESS-NAME-REGEX,(?i).*GTA5.*
+  - PROCESS-NAME-REGEX,(?i).*Aimbeast.*
+  - PROCESS-NAME-REGEX,(?i).*BattleBit.*
+  - PROCESS-NAME-REGEX,(?i).*DeadByDaylight.*
+  - PROCESS-NAME-REGEX,(?i).*EscapeFromTarkov.*
+  - PROCESS-NAME-REGEX,(?i).*TslGame.*
   - PROCESS-NAME-REGEX,(?i).*Win64-Shipping.*
