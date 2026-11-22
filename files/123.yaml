@@ -59,18 +59,19 @@ sniffer:
       ports:
         - 443
         - 8443
+    QUIC:
+      ports:
+        - 443
 
 tun:
   enable: true
-  stack: gvisor
+  stack: mips
   auto-route: true
   auto-detect-interface: true
+  strict-route: true
   dns-hijack:
     - any:53
     - tcp://any:53
-  strict-route: true
-  mtu: 1420
-  endpoint-independent-nat: true
   route-exclude-address:
     - 10.0.0.0/8
     - 172.16.0.0/12
@@ -722,52 +723,43 @@ dns:
     - "stun.*.*.*"
 
   default-nameserver:
-    - 9.9.9.9
-    - 94.140.14.14
-    - 212.109.221.20
-    - 77.88.8.8
-    - 149.112.112.112
-    - 94.140.15.15
-    - 212.109.195.93
-    - 77.88.8.1
+    - https://9.9.9.9/dns-query
+    - https://94.140.14.14/dns-query
+    - https://77.88.8.8/dns-query
 
   proxy-server-nameserver:
-    - https://dns.quad9.net/dns-query#♻️ БезVPN
-    - https://dns.adguard-dns.com/dns-query#♻️ БезVPN
-    - https://dns.comss.one/dns-query#♻️ БезVPN
-    - https://common.dot.dns.yandex.net/dns-query#♻️ БезVPN
+    - https://9.9.9.9/dns-query#♻️ БезVPN
+    - https://94.140.14.14/dns-query#♻️ БезVPN
+    - https://77.88.8.8/dns-query#♻️ БезVPN
 
   direct-nameserver-follow-policy: true
 
   direct-nameserver:
-    - https://dns.quad9.net/dns-query#♻️ БезVPN
-    - https://dns.adguard-dns.com/dns-query#♻️ БезVPN
-    - https://dns.comss.one/dns-query#♻️ БезVPN
-    - https://common.dot.dns.yandex.net/dns-query#♻️ БезVPN
+    - https://9.9.9.9/dns-query#♻️ БезVPN
+    - https://94.140.14.14/dns-query#♻️ БезVPN
+    - https://77.88.8.8/dns-query#♻️ БезVPN
 
   nameserver:
-    - https://dns.quad9.net/dns-query#🌍 Остальные сайты
-    - https://dns.adguard-dns.com/dns-query#🌍 Остальные сайты
-    - https://dns.comss.one/dns-query#🌍 Остальные сайты
-    - https://common.dot.dns.yandex.net/dns-query#🌍 Остальные сайты
+    - https://9.9.9.9/dns-query#🌍 Остальные сайты
+    - https://94.140.14.14/dns-query#🌍 Остальные сайты
+    - https://77.88.8.8/dns-query#🌍 Остальные сайты
 
   nameserver-policy:
     "rule-set:private":
       - system
 
     "rule-set:ru-list":
-      - https://dns.comss.one/dns-query#⚪🔵🔴 RU сайты
-      - https://common.dot.dns.yandex.net/dns-query#⚪🔵🔴 RU сайты
+      - https://77.88.8.8/dns-query#⚪🔵🔴 RU сайты
+      - https://77.88.8.1/dns-query#⚪🔵🔴 RU сайты
+      - system
 
     "rule-set:youtube":
-      - https://dns.quad9.net/dns-query#📺 YouTube
-      - https://dns.adguard-dns.com/dns-query#📺 YouTube
-      - https://dns.comss.one/dns-query#📺 YouTube
+      - https://9.9.9.9/dns-query#📺 YouTube
+      - https://94.140.14.14/dns-query#📺 YouTube
 
     "rule-set:ru-blocklist":
-      - https://dns.quad9.net/dns-query#🔒 VPN
-      - https://dns.adguard-dns.com/dns-query#🔒 VPN
-      - https://dns.comss.one/dns-query#🔒 VPN
+      - https://9.9.9.9/dns-query#🔒 VPN
+      - https://94.140.14.14/dns-query#🔒 VPN
 
 proxies:
   - name: ♻️ БезVPN
@@ -798,11 +790,10 @@ proxy-groups:
 
   - name: 🎲 Автовыбор
     type: fallback
-    #exclude-filter: "США|Канада|Япония"
     remnawave:
       include-proxies: true
       shuffle-proxies-order: true
-    url: "https://www.gstatic.com/generate_204"
+    url: https://www.gstatic.com/generate_204
     interval: 300
     hidden: true
     lazy: true
@@ -817,11 +808,6 @@ proxy-groups:
       - ♻️ БезVPN
 
 rule-providers:
-  quic:
-    type: inline
-    behavior: classical
-    payload:
-      - AND,((NETWORK,udp),(DST-PORT,443))
   private:
     type: http
     behavior: domain
@@ -846,6 +832,14 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/direct-list.mrs
     path: ./rule-sets/direct-list.mrs
     proxy: 🔒 VPN
+  torrent-list:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 43200
+    url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/torrent-list.mrs
+    path: ./rule-sets/torrent-list.mrs
+    proxy: 🔒 VPN
   torrent-process:
     type: http
     behavior: classical
@@ -862,6 +856,11 @@ rule-providers:
     url: https://github.com/Sn1pp1/mymihomofiles/raw/refs/heads/main/output/games-list.mrs
     path: ./rule-sets/games-list.mrs
     proxy: 🔒 VPN
+  games-list-ip:
+    type: inline
+    behavior: classical
+    payload:
+      - IP-CIDR,87.228.58.62/32
   games-process:
     type: http
     behavior: classical
@@ -912,12 +911,13 @@ rule-providers:
     proxy: 🔒 VPN
 
 rules:
-  - RULE-SET,quic,REJECT
   - RULE-SET,private,♻️ БезVPN
   - RULE-SET,private-ip,♻️ БезVPN,no-resolve
   - RULE-SET,direct-list,♻️ БезVPN
+  - RULE-SET,torrent-list,♻️ БезVPN
   - RULE-SET,torrent-process,♻️ БезVPN
   - RULE-SET,games-list,♻️ БезVPN
+  - RULE-SET,games-list-ip,♻️ БезVPN,no-resolve
   - RULE-SET,games-process,♻️ БезVPN
   - RULE-SET,youtube,📺 YouTube
   - RULE-SET,ru-blocklist,🔒 VPN
